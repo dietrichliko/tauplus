@@ -1,0 +1,5289 @@
++PATCH,TMCDES.
+*
++DECK,blankdek.
+*
++KEEP,TMCARS.
+C
+C   Title cards read in from TMCARD. All values for the KEYS
+C   are defined in the routine TMCARD
+C
+      PARAMETER(NKEYS=21)
+      PARAMETER(LUFFIN=28)
+      CHARACTER*6 KEYS(NKEYS)
+      CHARACTER*1 TYPES(NKEYS)
+      REAL CARDS(NKEYS)
+      COMMON /TMCARS/ KEYS,TYPES,CARDS
+*
++KEEP,TMPILI.
+C
+C   PILOT record information. The definition of PILINF is in
+C   the routine TPUPIL
+C
+      PARAMETER (NWPILI=100)
+      REAL PILINF(100)
+      COMMON /TMPILI/ PILINF
+*
++KEEP,TMEINF.
+C
+C   Global event information. These values are set in the routine TPRUN
+C
+      LOGICAL ISSIM
+      COMMON /TMEIL/ISSIM
+      COMMON /TMEII/IDUMMY
+      COMMON /TMEIR/RDUMMY
++KEEP,TMCUTS.
+C
+C   Information needed for cuts on events. The CUT values in IEVTCT,
+C   REVTCT and TCUTS are set in the routine TMCARD. The event information
+C   in TVALS, REVTIN and IEVTIN is set in the routine TPRUN
+C
+      PARAMETER (NECUTS=50)
+      PARAMETER (NTCUTS=10)
+      INTEGER IEVTIN(NECUTS),IEVTCT(NECUTS),IPASS(NECUTS),
+     +        NEVPAS(NECUTS)
+      REAL REVTIN(NECUTS),REVTCT(NECUTS)
+      REAL TVALS(NTCUTS),TCUTS(NTCUTS)
+      COMMON /TMCUTI/IEVTIN,IEVTCT,IPASS,NEVPAS
+      COMMON /TMCUTR/REVTIN,REVTCT,TVALS,TCUTS
+*
+*
++KEEP,TMSDES.
+C
+C   The following is a list of descriptions needed by the routine TPWSTA
+C   when writing out the end of processing statistics
+C
+C  ITEL(i)         = counter of events passing cut i, i=1,10
+C  ITELTOP(x,y,i)  = counter of events passing cut i and having real 
+C                    topology x-y 
+C  ITELTOPMC(x,y,i)= counter of events passing cut i and having generated
+C                    topology x-y
+C  NrAll(x,y)   = Counter of all events having real topology x-y
+C  NrAllMc(x,y) = Counter of all generated events having topology x-y
+C  NrTop(x,y)   = counter of tau events having real topology x-y
+C  NrTopMc(x,y) = counter of tau events having generated topology x-y
+C  NrLept(x,y)  = counter of leptonic events having real topology x-y
+C  NrLeptmc(x,y)= counter of leptonic events having generated topology x-y
+C  IGENDEC(w)   = counter of the decay mode w of the generated taus
+C  ITDEC(w,i)   = counter of the decay mode w of the tau passing cut i
+C  ITAUDEC(w)   = counter of the dacay mode w of the tau passing tau selection
+C  ILEPDEC(w)   = counter of the dacay mode w of the tau passing lpet selection
+C
+C   REMARK : Generated topology = the topology when DALITZ decays and 
+C      K0-short decays are not counted
+C
+C
+      CHARACTER*40 CTITLE,ETITLE
+      CHARACTER*40 CDESC(NECUTS),EDESC(NECUTS)
+      CHARACTER*1  CTYPES(NECUTS),ETYPES(NECUTS)
+      COMMON /TMSDES/ CTITLE,CDESC,CTYPES,ETITLE,EDESC,ETYPES
+      COMMON / MAIN / NREVT(5), ITEL(10), ITELTOP(8,8,10),
+     & ITELTOPMC(8,8,10),NrAll(8,8),NrAllMc(8,8),
+     & NrTop(8,8),NrTopMc(8,8),NrLept(8,8),NrLeptmc(8,8)
+      COMMON / MAIN2 / ITDEC(30,10),ITAUDEC(30),ILEPDEC(30),IGENDEC(30)
+*
++KEEP, TMIOUN.
+c
+c    The logical units for reading files : 
+C          LUNLUM = Unit to read Sat luminosity file
+C          LUNRQ  = Unit to read the runquality file
+C    THe year the data/MC has been produced
+C
+      COMMON/UNITS/ LUNLUM, LUNRQ, LUNBS
+      COMMON /YEAR/ IYEAR
+*
++KEEP,VUBNTUP.
+*
+      INTEGER   NVdHit , GenTop, DeTH1  ,PolH1, NMcH1, 
+     &   NMcTH1, CXMcH1, CMMcH1 
+      INTEGER  NChaH1 ,NProH1 ,NEmNH1 ,NHaNH1 ,NVdH1  ,
+     & McodH1
+      REAL     PtauH1 ,ThTauH1,FiTauH1
+      REAL     PQH1   ,TheH1  ,FiH1   ,EEH1   ,RadH1  ,dEdxH1 ,
+     & EemH1  ,EhaH1  ,trLeH1 ,ZimpH1 ,RimpH1 ,DPpH1  ,DThH1  ,
+     & DFiH1  ,DEeH1  ,SdEdxH1,ThEmH1 ,FiEmH1 ,TaEmH1 ,FaEmH1 ,
+     & E1EmH1 ,E2EmH1 ,E3EmH1 ,E4EmH1 ,E5EmH1 ,E6EmH1 ,E7EmH1 ,
+     & E8EmH1 ,E9EmH1 ,E1HaH1 ,E2HaH1 ,E3HaH1 ,E4HaH1 ,
+     & CorCH1 ,ELECH1 ,FIBOH1 ,HPCCH1 
+
+      INTEGER  NrEmNH1,NrHaNH1,NHaLNH1,McoNH1 ,McoHH1
+      REAL     EEmNH1 ,THeNH1 ,FiNH1  ,E1NH1  ,E2NH1  ,E3NH1   ,
+     & E4NH1  ,E5NH1  ,E6NH1  ,E7NH1  ,E8NH1  ,E9NH1  ,
+     & EHaHH1 ,THeHH1 ,FiHH1
+      INTEGER  NrAsH1
+      REAL     xP1VdH1,yP1VdH1,RP1VdH1,PhiVdH1
+
+      INTEGER  DeTH2  ,PolH2, NMcH2, NMcTH2, CXMcH2,CMMcH2
+      INTEGER  NChaH2 ,NProH2 ,NEmNH2 ,NHaNH2 ,NVdH2  ,
+     & McodH2 
+      REAL     PtauH2 ,ThTauH2,FiTauH2
+      REAL     PQH2   ,TheH2  ,FiH2   ,EEH2   ,RadH2  ,dEdxH2 ,
+     & EemH2  ,EhaH2  ,trLeH2 ,ZimpH2 ,RimpH2 ,DPpH2  ,DThH2  ,
+     & DFiH2  ,DEeH2  ,SdEdxH2,ThEmH2 ,FiEmH2 ,TaEmH2 ,FaEmH2 ,
+     & E1EmH2 ,E2EmH2 ,E3EmH2 ,E4EmH2 ,E5EmH2 ,E6EmH2 ,E7EmH2 ,
+     & E8EmH2 ,E9EmH2 ,E1HaH2 ,E2HaH2 ,E3HaH2 ,E4HaH2 ,
+     & CorCH2 ,ELECH2 ,FIBOH2 ,HPCCH2 
+      INTEGER  NrEmNH2,NrHaNH2,NHaLNH2,McoNH2 ,McoHH2
+      REAL     EEmNH2 ,THeNH2 ,FiNH2  ,E1NH2  ,E2NH2  ,E3NH2  ,
+     & E4NH2  ,E5NH2  ,E6NH2  ,E7NH2  ,E8NH2  ,E9NH2  ,
+     & EHaHH2 ,THeHH2 ,FiHH2
+      INTEGER  NrAsH2
+      REAL     xP1VdH2,yP1VdH2,RP1VdH2,PhiVdH2
+
+
+      COMMON / VDGLOB  / NVdHit
+
+
+      REAL PPMcH1, THMcH1, FIMcH1,
+     &     PPMcH2, THMcH2, FIMcH2
+      COMMON /simtup /GenTop ,
+     &   PtauH1, ThTauH1, FiTauH1, DeTH1, PolH1, NMcH1, NMcTH1 ,
+     &   CXMcH1(15), CMMcH1(15), PPMcH1(15),THMcH1(15),FIMcH1(15),
+     &   PtauH2, ThTauH2, FiTauH2, DeTH2, PolH2, NMcH2, NMcTH2,
+     &   CXMcH2(15), CMMcH2(15), PPMcH2(15),THMcH2(15),FIMcH2(15)
+
+      COMMON / MYHEM1 /
+     & NChaH1    ,NProH1    ,NEmNH1    ,NHaNH1    ,
+     & PQH1(7)   ,TheH1(7)  ,FiH1(7)   ,McodH1(7) ,EEh1(7)   ,
+     & RadH1(7)  ,dEdxH1(7) ,EemH1(7)  ,EhaH1(7)  ,trLeH1(7) ,
+     & ZimpH1(7) ,RimpH1(7) ,DPpH1(7)  ,DThH1(7)  ,DFiH1(7)  ,
+     & DEeH1(7)  ,SdEdxH1(7),NVdH1(7)  ,
+     & TaEmH1(7) ,FaEmH1(7) ,ThEmH1(7) ,
+     & FiEmH1(7) ,E1EmH1(7) ,E2EmH1(7) ,E3EmH1(7) ,E4EmH1(7) ,
+     & E5EmH1(7) ,E6EmH1(7) ,E7EmH1(7) ,E8EmH1(7) ,E9EmH1(7) ,
+     & E1HaH1(7) ,E2HaH1(7) ,E3HaH1(7) ,E4HaH1(7) ,CorCh1(7) ,
+     & ELECH1(7) ,FIBOH1(7) ,HPCCH1(7)
+      COMMON / MYNEUH1 /
+     & NrEmNH1   ,EEmNH1(7) ,THeNH1(7) ,FiNH1(7)  ,McoNH1(7) ,
+     & E1NH1(7)  ,E2NH1(7)  ,E3NH1(7)  ,E4NH1(7)  ,E5NH1(7)  ,
+     & E6NH1(7)  ,E7NH1(7)  ,E8NH1(7)  ,E9NH1(7)  ,
+     & NrHaNH1   ,EHaHH1(5) ,THeHH1(5) ,FiHH1(5)  ,McoHH1(5) ,
+     & NHaLNH1(5),corfH1(7)  
+      COMMON / Vdash1/
+     & NrAsH1    ,xP1VdH1(6),yP1VdH1(6),RP1VdH1(6),PhiVdH1(6)
+
+      COMMON / MYHEM2 /
+     & NChaH2    ,NProH2    ,NEmNH2    ,NHaNH2    ,
+     & PQH2(7)   ,TheH2(7)  ,FiH2(7)   ,McodH2(7) ,Eeh2(7)   ,
+     & RadH2(7)  ,dEdxH2(7) ,EemH2(7)  ,EhaH2(7)  ,trLeH2(7) ,
+     & ZimpH2(7) ,RimpH2(7) ,DPpH2(7)  ,DThH2(7)  ,DFiH2(7)  ,
+     & DEeH2(7)  ,SdEdxH2(7),NVdH2(7)  ,
+     & TaEmH2(7) ,FaEmH2(7) ,ThEmH2(7) ,
+     & FiEmH2(7) ,E1EmH2(7) ,E2EmH2(7) ,E3EmH2(7) ,E4EmH2(7) ,
+     & E5EmH2(7) ,E6EmH2(7) ,E7EmH2(7) ,E8EmH2(7) ,E9EmH2(7) ,
+     & E1HaH2(7) ,E2HaH2(7) ,E3HaH2(7) ,E4HaH2(7) ,CorCh2(7) ,
+     & ELECH2(7) ,FIBOH2(7) ,HPCCH2(7)
+ 
+      COMMON / MYNEUH2 /
+     & NrEmNH2   ,EEmNH2(7) ,THeNH2(7) ,FiNH2(7)  ,McoNH2(7) ,
+     & E1NH2(7)  ,E2NH2(7)  ,E3NH2(7)  ,E4NH2(7)  ,E5NH2(7)  ,
+     & E6NH2(7)  ,E7NH2(7)  ,E8NH2(7)  ,E9NH2(7)  ,
+     & NrHaNH2   ,EHaHH2(5) ,THeHH2(5) ,FiHH2(5)  ,McoHH2(5) ,
+     & NHaLNH2(5),corfH2(7)  
+      COMMON / VdasH2/
+     & NrAsH2    ,xP1VdH2(6),yP1VdH2(6),RP1VdH2(6),PhiVdH2(6)
+
+      COMMON / cuts / ITAUS , IPASS1, IPASS2, IPASS3, IPASS4,
+     & IPASS5 , IPASS6 , IPASS7 , IPASS8 , IPASS9 , IPASS10,
+     & IPASS11, IPASS12, IPASS13, IPASS14, IPASS15, IPASS16
+
+*
+*
+*
++PATCH,TMANA.
++DECK,tmmain.
+************************************************************
+*                                                          *
+* TMMAIN                                                   *
+*                                                          *
+* a TAUMINATOR DST Analysis routine                        *
+*                                                          *
+* Created: 30/04/94                                        *
+* Purpose: main program. Calls TAUP to steer               *
+*                                                          *
+************************************************************
+C
+      PROGRAM TMMAIN
+C
+C   Run TAUPLUS
+C
++SELF, IF = TPUX, TPPHUX.
+      CALL TAUP
++SELF, IF = TPPH.
+      CALL TAUP(' ',ISPACE,IENDFL)
++SELF.
+C
+      END
+*
++DECK,TPSTRT.
+************************************************************
+*
+* TPSTRT                                                   *
+*                                                          *
+* a TAUMINATOR DST Analysis routine                        *
+*                                                          *
+* Purpose:  Initialize the TAUMINATOR package              *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TPSTRT
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TPIOUN.
++CDE,TMIOUN.
++CDE,TMCUTS.
+C
+C   Local declarations
+C 
+C   Define I/O units
+C
+      CALL TMINLU
+C
+C   Initialize statistical variables
+C
+      CALL TMGINI
+C
+C   Get title cards ( cuts )
+C
+      CALL TMCARD
+C
+C   Book the general TAUPLUS ntuple
+C
+c      CALL TPBOOK
+C
+C   Book the VUB ntuple
+C
+      CALL VUBOOK
+C
+C   Book histograms 
+C
++SELF, IF=HISTO.
+      CALL TMBOOK
++SELF
+C
+C   Read RUNSEL information into arrays
+C
+      WRITE(TPUDB,*) ' YEAR AND UNITS',IYEAR,LUNRQ,LUNLUM 
+      CALL TPRQ(IYEAR,LUNRQ,TPUDB,0,0,NRQTAP,RDUMMY,IERRQ)
+      IF ( IERRQ .EQ. 0) THEN
+         WRITE(TPUDB,1000) NRQTAP,IYEAR
+      ELSE
+         WRITE(TPUDB,1010) LUNRQ,IYEAR
+      ENDIF
+C
+C   Read SAT luminosity information into arrays
+C
+      CALL TPLUM(IYEAR,LUNLUM,TPUDB,0,0,NLTAP,RDUMMY,IERLUM)
+      IF (IERLUM.EQ.0)   THEN
+         WRITE(TPUDB,1100) NLTAP,IYEAR
+      ELSE
+         WRITE(TPUDB,1110) LUNLUM,IYEAR
+      ENDIF
+C
+C   Read beamspot file
+C
+      CALL READBS(LUNBS)
+C
+C   Fill the common PXCONS needed for extrapolation (in MUCAL2)
+C
+      CALL BPILOT(Btestla, Bgevcm)
+C
+      RETURN
+
+ 1000 FORMAT(//'RUNQUALITY FILE :'/
+     + 5X,' NUMBER OF TAPES READ IN :', I8/
+     + 5X,' YEAR : ',I10/)
+ 1010 FORMAT(//'RUNQUALITY FILE :'/
+     + 5X,' ERROR READING THE RUNQUALITY FILE FROM LUN :',I3/
+     + 5X,' YEAR = ', I10/) 
+ 1100 FORMAT(//'SAT LUMINOSITY FILE :'/
+     + 5X,' NUMBER OF TAPES READ IN :', I8/
+     + 5X,' YEAR : ',I10/)
+ 1110 FORMAT(//'SAT LUMINOSITY FILE :'/
+     + 5X,' ERROR READING THE SAT LUMINOSITY FILE FROM LUN :',I3/
+     + 5X,' YEAR = ', I10/)
+      END
+*
++DECK,TMINLU.
+*CMZ :          08/03/94  00.56.52  by  D. M. Edsall
+*-- Author :    D. M. Edsall   06/03/94
+************************************************************
+*                                                          *
+* TMINLU                                                   *
+*                                                          *
+* Purpose:  Initialize the TAUMINATOR package I/O units    *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMINLU
+C
+C   Global declarations
+C
++CDE,UXZLUN,IF=TPUX,TPPHUX.
++CDE,PHLUN,IF=TPPH.
++CDE,TPIOUN.
++CDE,TMIOUN.
+C
+C   Local declarations
+C
+C
+C   Define I/O units
++SELF,IF=TPUX,TPPHUX.
+C
+C  Zebra system log unit
+C
+      IQLOG=97
+C
+C   UX unit
+C
+      IQPRNT=97
+C
++SELF,IF=TPPH.
+C
+C   PHDST units
+C
+      LUNDST = 20
+      LUNTTY = 6
+      LUNLOG = 97
+      LUNHST = 99
+      LUNHBO = 99
+      LUNPDL = 19
+      LUNDSC = 36
++SELF.
+C
+C   TAUPLUS units
+C
+      TPUDB =98
+      TPUPAW=99
+C
+C   YEAR
+C
+c      IYEAR = 93
+C
+C
+C   TAUMINATOR units
+C
+      LUNRQ  = IYEAR
+      LUNLUM = IYEAR - 80 
+      LUNBS  = IYEAR - 70 
+
+      RETURN
+      END
+*
++DECK,tmgini.
+************************************************************
+*                                                          *
+* TMGINI                                                   *
+*                                                          *
+* Purpose: initialize statistical variables                *
+*          initialize description on statistical output    *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMGINI
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TMCUTS.
++CDE,TMSDES.
+C
+C   Local declarations
+C
+C   Initialize cut statistics variables
+C
+      CALL VZERO(NREVT    , 5       )
+      CALL VZERO(ITEL     , 10      )
+      CALL VZERO(ITELTOP  , 8*8*10  )
+      CALL VZERO(ITELTOPMC, 8*8*10  )
+      CALL VZERO(NrAll    , 8*8     )
+      CALL VZERO(NrAllMC  , 8*8     )
+      CALL VZERO(NrTop    , 8*8     )
+      CALL VZERO(NrTopMc  , 8*8     )
+      CALL VZERO(NrLept   , 8*8     )    
+      CALL VZERO(NrLeptmc , 8*8     )    
+      CALL VZERO(IGEMDEC  , 30       )
+      CALL VZERO(ITDEC    , 30*10    )
+      CALL VZERO(ITAUDEC  , 30       )
+      CALL VZERO(ILEPDEC  , 30       )
+      CALL VZERO(NEVPAS,NECUTS)
+
+C
+C   Create descriptions for writing statistics at the end
+C
+      CTITLE='Event cuts variables defined            '
+      CDESC(1)='Maximum number of prongs'
+      CTYPES(1)='I'
+      CDESC(2)='Min num of tracks in hemisphere 1          '
+      CTYPES(2)='I'  
+      CDESC(3)='Min num of tracks in hemisphere 2          '
+      CTYPES(3)='I'  
+      CDESC(4)='Max num of good charged tracks             '
+      CTYPES(4)='I'
+      CDESC(5)='Min sine of the angular acceptance         '
+      CTYPES(5)='R'
+      CTYPES(6)='N'
+      CDESC(7)='Max Z peri of leading track hem 1          '
+      CTYPES(7)='R'
+      CDESC(8)='Max Z peri of leading track hem 2          '
+      CTYPES(8)='R'
+      CDESC(9)='Max imp par leading track hem 1            '
+      CTYPES(9)='R'
+      CDESC(10)='Max imp par leading track hem 2           '
+      CTYPES(10)='R'
+      CDESC(11)='Min isolation angle ( degrees )           '
+      CTYPES(12)='R'
+      CDESC(12)='Min visible energy of event ( GeV )       '
+      CTYPES(12)='R'
+      CDESC(13)='Max Z dist betw lead tracks ( 1v1 )       '
+      CTYPES(13)='R'
+      CDESC(14)='Max radial energy of the event            '
+      CTYPES(14)='R'
+      CDESC(15)='Max radial momentum of the event          '
+      CTYPES(15)='R'
+      CDESC(16)='Min acollinearity ( 1v1 )                 '
+      CTYPES(16)='R'
+      CDESC(17)='Min missing trans mom ( 1v1 )             '
+      CTYPES(17)='R'
+      CDESC(18)='max number of prongs                      '
+      CTYPES(18)='I'
+      CDESC(19)='Max cos of angular acceptance             '
+      CTYPES(19)='R'
+      CDESC(20)='max number of good charged tracks         '
+      CTYPES(20)='I'
+      CDESC(21)='min number of good charged tracks         '
+      CTYPES(21)='I'
+      CDESC(22)='min isolation angle ( degrees )           '
+      CTYPES(22)='R'
+      CDESC(23)='min visible energy ( Gev )                '
+      CTYPES(23)='R'
+      CDESC(24)='max radial energy ( GeV )                 '
+      CTYPES(24)='R'
+      CDESC(25)='max radial momentum ( GeV )               '
+      CTYPES(25)='R'
+      DO 10,I=26,NECUTS
+   10 CTYPES(I)='N'
+C
+C
+      ETITLE='Number of events passing these cuts     '
+      DO 20,I=1,25
+   20 ETYPES(I)='I'
+      EDESC(1)='Number of prongs <= NPRNGC              '
+      EDESC(2)='at least NTHMxC tracks per hemisphere   '
+      EDESC(3)='Number of good charged tracks <= NTRKCT '
+      EDESC(4)='one lead track in fiducial region       '
+      EDESC(5)='ABS(Z1) .LE. Z1CUT                      '
+      EDESC(6)='ABS(Z2) .LE. Z2CUT                      '
+      EDESC(7)='ABS(R1) .LE. R1CUT OR P.RARROF CUT      '
+      EDESC(8)='ABS(R2) .LE. R2CUT OR P.RARROF CUT      '
+      EDESC(9)='ANGISO .GE. ANGICT                      '
+      EDESC(10)='EVIS .GE. EVISCT                       '
+      EDESC(11)='ABS(Z1-Z2) .LE. Z11CUT                 '
+      EDESC(12)='ERAD .LE. ERADCT                       '
+      EDESC(13)='PRAD .LE. PRADCT                       '
+      EDESC(14)='ACOL .GE. ACOLCT                       '
+      EDESC(15)='PTMISS .GE. PTMISC                     '
+      EDESC(16)='IS1V1                                  '
+      EDESC(17)='NPRONG .LE. NPRGMX                     '
+      EDESC(18)='COSMIN .LE. COSCUT                     '
+      EDESC(19)='NTRACK .LE. NTRKMX                     '
+      EDESC(20)='NTRACK .GE. NTRKMN                     '
+      EDESC(21)='ANGISO .GE. ANGIMN                     '
+      EDESC(22)='EVIS .GE. EVISMN                       '
+      EDESC(23)='ERAD .LE. ERADMX                       '
+      EDESC(24)='PRAD .LE. PRADMX                       '
+      EDESC(25)='NTRHM1 .GE. 1 .AND. NTRHM2 .GE. 1      '
+      DO 30,I=26,NECUTS
+   30 ETYPES(I)='N'
+
+      RETURN
+      END
+*    
++DECK,TMCARD.
+************************************************************
+*                                                          *
+* TMCARD                                                   *
+*                                                          *
+* Purpose:  Read cards for the TAUMINATOR package          *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMCARD
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TPIOUN.
++CDE,TMCARS.
++CDE,TMCUTS.
+C
+C   Local declarations
+C
+C
+C   Set standard TEAM 3 cuts ( which can be overriden by cards )
+C
+      CALL TPCUTS(NTCUTS,TCUTS,NECUTS,IEVTCT,REVTCT)
+C
+C   Define keys, key types and key defaults
+C
+*
+*   Cuts to define good tracks:
+*
+*
+      KEYS(1)='PMINCT'        ! Minimum track momentum (0.0)
+      TYPES(1)='R'
+      CARDS(1)=TCUTS(1)
+*
+      KEYS(2)='RVTXCT'        ! Maximum impact parameter xy plane (5.0 cm)
+      TYPES(2)='R'
+      CARDS(2)=TCUTS(2)
+*
+      KEYS(3)='ZVTXCT'        ! Maximum z distance from xy plane (10. cm)
+      TYPES(3)='R'
+      CARDS(3)=TCUTS(3)
+*
+      KEYS(4)='TLENCT'        ! Minimum track length (0.0 cm)
+      TYPES(4)='R'
+      CARDS(4)=TCUTS(4)
+*
+      KEYS(5)='RFIRCT'        ! Maximum radius of the first measured point
+      TYPES(5)='R'            !  (10000. cm)
+      CARDS(5)=TCUTS(5)
+*
+*
+*   Cuts applied to the events
+C
+      KEYS(6)='SINCUT'        ! Fiducial cut ; at least one track inside
+      TYPES(6)='R'            !  (0.7313537)
+      CARDS(6)=REVTCT(19)
+*
+      KEYS(7)='NPRGMX'        ! Maximum number of prongs (12)
+      TYPES(7)='I'
+      CARDS(7)=IEVTCT(18)
+*
+      KEYS(8)='NTRKMN'        ! Minimum number of tracks (2)
+      TYPES(8)='I'
+      CARDS(8)=IEVTCT(21)
+*
+      KEYS(9)='NTRKMX'        ! Maximum number of tracks (8)
+      TYPES(9)='I'
+      CARDS(9)=IEVTCT(20)
+*
+      KEYS(10)='PRADMX'       ! Maximum radial momentum (200.)
+      TYPES(10)='R'
+      CARDS(10)=REVTCT(25)
+*
+      KEYS(11)='EEMRMX'       ! Maximum radial electromagnetic energy (200.)
+      TYPES(11)='R'
+      CARDS(11)=REVTCT(24)
+*
+      KEYS(12)='EVISMN'       ! Minumum visible energy (8.)
+      TYPES(12)='R'
+      CARDS(12)=REVTCT(23)
+*
+      KEYS(13)='ANGIMN'       ! Minimum isolation angle (150.)
+      TYPES(13)='R'
+      CARDS(13)=REVTCT(22)
+*
+      KEYS(14)='ZIMPMX'       ! Max.Z impact par.of the leading tr.(4.5)
+      TYPES(14)='R'
+      CARDS(14)=REVTCT(7)
+
+      KEYS(15)='RIMPMX'       ! Max.R impact par.of the leading tr.(1.5)
+      TYPES(15)='R'           
+      CARDS(15)=REVTCT(9)      
+*
+      KEYS(16)='RIMPEX'       ! Max.R impact par.of one of the leading
+      TYPES(16)='R'           ! tracks if they have at least 2 VD hits ass. 
+      CARDS(16)= 0.3
+*
+*          Only for 1-1 prongs :
+*
+      KEYS(17)='ZDIFMX'       ! Maximal diff.in z imp. parameters of the 2
+      TYPES(17)='R'           ! leading tr. (3.)
+      CARDS(17)=REVTCT(13)    
+*
+      KEYS(18)='ANGAMN'       ! Minimum acolinearity angle (0.5)
+      TYPES(18)='R'
+      CARDS(18)=REVTCT(16)
+
+      KEYS(19)='PTMIMN'       ! Minimum missing transverse momentum (0.4)
+      TYPES(19)='R'
+      CARDS(19)=REVTCT(17)
+*
+*   RUNQUAL
+*
+      KEYS(20)='RUNSEL'
+      TYPES(20)='L'
+      CARDS(20)=1.0            ! No run qualifier information
+*
+*   Half opening angle of the cone to associate energies
+*
+      KEYS(21)='CONE'
+      TYPES(21)='R'
+      CARDS(21)= 30.
+
+*
+C
+C   Get keys
+C
+      CALL TPCAR(NKEYS,KEYS,TYPES,LUFFIN,TPUDB,CARDS)
+C
+C   Assign cuts from cards
+C
+C               Track quality cuts:
+      TCUTS(1)=CARDS(1)      !! Minimum track momentum
+      TCUTS(2)=CARDS(2)      !! Maximum impact parameter xy plan
+      TCUTS(3)=CARDS(3)      !! Maximum z distance from the xy plan
+      TCUTS(4)=CARDS(4)      !! Minimum track length 
+      TCUTS(5)=CARDS(5)      !! Maximum radius of the first measured point
+C
+C              Tau selection cuts:
+      REVTCT(5) =CARDS(6)    !! Fiducial cut ; at least one track inside
+      IEVTCT(1) =CARDS(7)    !! Maximum number of prongs 
+      IEVTCT(2) =CARDS(8)/2  !! minimal number of tracks per hemisfeer
+      IEVTCT(3) =CARDS(8)/2  !! minimal number of tracks per hemisfeer
+      IEVTCT(4) =CARDS(9)    !! maximal number of tracks
+      REVTCT(14)=CARDS(11)   !! Maximum radial electromagnetic energy 
+      REVTCT(15)=CARDS(10)   !! Maximum radial momentum
+      REVTCT(12)=CARDS(12)   !! minimal visible energy
+      REVTCT(11)=CARDS(13)   !! Minimum isolation angle
+      REVTCT(7) =CARDS(14)   !! Max.Z impact par.of the leading tr.
+      REVTCT(8) =CARDS(14)   !! Max.Z impact par.of the leading tr.
+      REVTCT(9) =CARDS(15)   !! Max.R impact par.of the leading tr.
+      REVTCT(10)=CARDS(15)   !! Max.R impact par.of the leading tr.
+      REVTCT(30)=CARDS(16)   !! Max R impact if at least 2 VD hits ass.
+
+      REVTCT(13)=CARDS(17)   !! Maximal diff.in z imp. parameters
+      REVTCT(16)=CARDS(18)   !! Minimum acolinearity angl
+      REVTCT(17)=CARDS(19)   !! Minimum missing transverse momentum 
+ 
+
+      RETURN
+      END
+*
++DECK,tpbook.
+************************************************************
+*                                                          *
+* TPBOOK                                                   *
+*                                                          *
+* Purpose: book the general TAUPLUS ntuple                 *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TPBOOK
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TPIOUN.
++CDE,UXBOOK.
+C
+C   Local declarations
+C
+         CALL TPNTIN(100,40)
+
+         CALL TPINGL(40)
+         CALL TPINMC(40)
+         CALL TPINTO(40)
+         CALL TPINCH(40)
+         CALL TPINNE(40)
+C
+C
+      RETURN
+      END
+*
++DECK,vubook.
+************************************************************
+*                                                          *
+* VUBOOK                                                   *
+*                                                          *
+* Purpose: book the VUB  ntuple                            *
+*                                                          *
+***** OPTION : TESTNTUP for a less complete ntuple of all  *
+*              events to study the tau selection           *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE VUBOOK
+C
+C   Global declarations
+*
++CDE, UXBOOK.
++CDE,VUBNTUP.
++CDE,TPIOUN.
+C
+C   Local declarations
+C
+        COMMON /QUEST/IQUEST(100)
+
+        NTUP = 41
+* Initialise HBOOK and ntuple
+c       CALL TPNTIN( TPUPAW, NTUP )
+ 
+** Initialise HBOOK
+       CALL HLIMIT (-NBOOKW)
+       IQUEST(10) = 65000
+
+** Open output file for PAW
+       CALL HROPEN(TPUPAW,'ZDST','VUB.NTUP','NQ',1024,istat)
+*
+** BOOK NEW NTUPLE
+       CALL HBNT(NTUP,'NEW_NTUPLE','D')
+
+** DECALRE ALL VARIABLES 
+*    book the event variables 
+       CALL TPINGL( NTUP )
+       CALL HBNAME(NTUP,' VdGlob ',NVDHIT,'NVDHIT[0,200]:I ')
+
++SELF,IF=TESTNTUP.
+        CALL HBNAME(NTUP,'curts',ITAUS,'ITAUS[0,15]:I,
+     &  IPASS1[0,1]:I, IPASS2[0,1]:I, IPASS3[0,1]:I, IPASS4[0,1]:I,
+     &  IPASS5[0,1]:I, IPASS6[0,1]:I, IPASS7[0,1]:I, IPASS8[0,1]:I,
+     &  IPASS9[0,1]:I, IPASS10[0,1]:I,IPASS11[0,1]:I,IPASS12[0,1]:I,
+     &  IPASS13[0,1]:I,IPASS14[0,1]:I,IPASS15[0,1]:I,IPASS16[0,1]:I')
++SELF.
+
+*    book generation variables.
+       CALL HBNAME(NTUP,'simTop ',GenTop,'GenTop:I ')
+       CALL HBNAME(NTUP,'simH1  ',PTauH1,'
+     &    PTauH1, ThTauH1, FiTauH1 ')
+       CALL HBNAME(NTUP,'simH1 ',DeTH1,'
+     &    DeTH1:I  ,PolH1:I   ,NMcH1[0,15]  , nMcTH1[0,15] ')
+       CALL HBNAME(NTUP,'simH1  ',CXMcH1  ,'CXMcH1(NMcH1):I ')
+       CALL HBNAME(NTUP,'simH1  ',CMMcH1  ,'CMMcH1(NMcH1):I ')
+       CALL HBNAME(NTUP,'simH1  ',PPMcH1  ,'PPMcH1(NMcH1)   ')
+       CALL HBNAME(NTUP,'simH1  ',THMcH1  ,'THMcH1(NMcH1)   ')
+       CALL HBNAME(NTUP,'simH1  ',FIMcH1  ,'FIMcH1(NMcH1)   ')
+       CALL HBNAME(NTUP,'simH2 ',PTauH2,'
+     &    PTauH2, ThTauH2, FiTauH2 ')
+       CALL HBNAME(NTUP,'simH2 ',DeTH2,'
+     &    DeTH2:I  ,PolH2:I   ,NMcH2[0,15]  ,nMcTH2[0,15] ')
+       CALL HBNAME(NTUP,'simH2  ',CXMcH2  ,'CXMcH2(NMcH2):I ')
+       CALL HBNAME(NTUP,'simH2  ',CMMcH2  ,'CMMcH2(NMcH2):I ')
+       CALL HBNAME(NTUP,'simH2  ',PPMcH2  ,'PPMcH2(NMcH2)   ')
+       CALL HBNAME(NTUP,'simH2  ',THMcH2  ,'THMcH2(NMcH2)   ')
+       CALL HBNAME(NTUP,'simH2  ',FIMcH2  ,'FIMcH2(NMcH2)   ')
+ 
+
+*    book variables of charged tracks hemisphere 1 + topologycal 
+*      vaiables.
+         CALL HBNAME(NTUP,'Hemi1 ',NChaH1 ,
+     &    'NChaH1[0,7] ,NProH1[0,30] ,NEmNH1[0,30] ,NHaNH1[0,30] ')
+         CALL HBNAME(NTUP,'Hemi1 ',PQH1   ,'PQH1(NChaH1)    ')
+         CALL HBNAME(NTUP,'Hemi1 ',TheH1  ,'TheH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',FiH1   ,'FiH1(NChaH1)    ')
+         CALL HBNAME(NTUP,'Hemi1 ',McodH1 ,'McodH1(NChaH1)  ')
+         CALL HBNAME(NTUP,'Hemi1 ',EeH1   ,'EeH1(NChaH1)    ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi1 ',RadH1  ,'RadH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',dEdxH1 ,'dEdxH1(NChaH1)  ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi1 ',EemH1  ,'EemH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',EhaH1  ,'EHaH1(NChaH1)   ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi1 ',trLeH1 ,'trLeH1(NChaH1)  ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi1 ',ZimpH1 ,'ZimpH1(NChaH1)  ')
+         CALL HBNAME(NTUP,'Hemi1 ',RimpH1 ,'RimpH1(NChaH1)  ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi1 ',DPpH1  ,'DPpH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',DThH1  ,'DThH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',DFiH1  ,'DFiH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',DEeH1  ,'DEeH1(NChaH1)   ')
+         CALL HBNAME(NTUP,'Hemi1 ',SdEdxH1,'SdEdxH1(NChaH1) ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi1 ',NVdH1  ,'NVdH1(NChaH1)[0,20]:I ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'hemi1 ',TaEmH1 ,'TaEmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',FaEmH1 ,'FaEmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',ThEmH1 ,'ThEmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',FiEmH1 ,'FiEmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E1EmH1 ,'E1EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E2EmH1 ,'E2EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E3EmH1 ,'E3EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E4EmH1 ,'E4EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E5EmH1 ,'E5EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E6EmH1 ,'E6EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E7EmH1 ,'E7EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E8EmH1 ,'E8EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'hemi1 ',E9EmH1 ,'E9EmH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',E1HaH1 ,'E1HaH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',E2HaH1 ,'E2HaH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',E3HaH1 ,'E3HaH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',E4HaH1 ,'E4HaH1(NChaH1) ')
++SELF,IF=TESTNTUP.
+         CALL HBNAME(NTUP,'Hemi1 ',CorCH1 ,'CorCH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',ElecH1 ,'ElecH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',FiBoH1 ,'FiBoH1(NChaH1) ')
+         CALL HBNAME(NTUP,'Hemi1 ',HPCCh1 ,'HPCCH1(NChaH1) ')
++SELF.
+
+*   book variables assiciated to neutrals hemisphere 1 
+         CALL HBNAME(NTUP,'NeuH1 ',NrEmNH1 ,'NrEmNH1[0,7]:I ')
+         CALL HBNAME(NTUP,'NeuH1 ',EEmNH1  ,'EEmNH1(NrEmNH1)')
+         CALL HBNAME(NTUP,'NeuH1 ',THeNH1  ,'THeNH1(NrEmNH1)')
+         CALL HBNAME(NTUP,'NeuH1 ',FiNH1   ,'FiNH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',McoNH1  ,'McoNH1(NrEmNH1) ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'NeuH1 ',E1NH1   ,'E1NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E2NH1   ,'E2NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E3NH1   ,'E3NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E4NH1   ,'E4NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E5NH1   ,'E5NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E6NH1   ,'E6NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E7NH1   ,'E7NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E8NH1   ,'E8NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',E9NH1   ,'E9NH1(NrEmNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',NrHaNH1 ,'NrHaNH1[0,5]:I ')
+         CALL HBNAME(NTUP,'NeuH1 ',EHaHH1  ,'EHaHH1(NrHaNH1)')
+         CALL HBNAME(NTUP,'NeuH1 ',THeHH1  ,'THeHH1(NrHaNH1)')
+         CALL HBNAME(NTUP,'NeuH1 ',FiHH1   ,'FiHH1(NrHaNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',McoHH1  ,'McoHH1(NrHaNH1) ')
+         CALL HBNAME(NTUP,'NeuH1 ',NHaLNH1 ,'NHaLNH1(NrHaNH1)[0,16]:I ')
++SELF,IF=TESTNTUP.
+         CALL HBNAME(NTUP,'NeuH1 ',corfH1  ,'corfH1(NrEmNH1)')
++SELF.
+
++SELF,IF=VUBBNTUP.
+*   book variables assiciated with the tracks made within the VD
+*        unassociated VD hits, hemisphere 2
+         CALL HBNAME(NTUP,'VdAsH1',NrAsH1 ,'NrAsH1[0,6]:I')
+         CALL HBNAME(NTUP,'VdAsH1',xP1VdH1,'xP1VdH1(NrAsH1)')
+         CALL HBNAME(NTUP,'VdAsH1',yP1VdH1,'yP1VdH1(NrAsH1)')
+         CALL HBNAME(NTUP,'VdAsH1',RP1VdH1,'RP1VdH1(NrAsH1)')
+         CALL HBNAME(NTUP,'VdAsH1',PhiVdH1,'PhiVdH1(NrAsH1)')
++SELF.
+
+*   Book variables associated to charged tracks hemisphere 2
+         CALL HBNAME(NTUP,'Hemi2 ',NChaH2 ,
+     &    'NChaH2[0,7] ,NProH2[0,30] ,NEmNH2[0,30] ,NHaNH2[0,30] ')
+         CALL HBNAME(NTUP,'Hemi2 ',PQH2   ,'PQH2(NChaH2)    ')
+         CALL HBNAME(NTUP,'Hemi2 ',TheH2  ,'TheH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',FiH2   ,'FiH2(NChaH2)    ')
+         CALL HBNAME(NTUP,'Hemi2 ',McodH2 ,'McodH2(NChaH2)  ')
+         CALL HBNAME(NTUP,'Hemi2 ',EeH2   ,'EeH2(NChaH2)    ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi2 ',RadH2  ,'RadH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',dEdxH2 ,'dEdxH2(NChaH2)  ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi2 ',EemH2  ,'EemH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',EhaH2  ,'EHaH2(NChaH2)   ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi2 ',trLeH2 ,'trLeH2(NChaH2)  ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi2 ',ZimpH2 ,'ZimpH2(NChaH2)  ')
+         CALL HBNAME(NTUP,'Hemi2 ',RimpH2 ,'RimpH2(NChaH2)  ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi2 ',DPpH2  ,'DPpH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',DThH2  ,'DThH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',DFiH2  ,'DFiH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',DEeH2  ,'DEeH2(NChaH2)   ')
+         CALL HBNAME(NTUP,'Hemi2 ',SdEdxH2,'SdEdxH2(NChaH2) ')
++SELF.
+         CALL HBNAME(NTUP,'Hemi2 ',NVdH2  ,'NVdH2(NChaH2)[0,20]:I ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'Hemi2 ',TaEmH2 ,'TaEmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',FaEmH2 ,'FaEmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',ThEmH2 ,'ThEmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',FiEmH2 ,'FiEmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E1EmH2 ,'E1EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E2EmH2 ,'E2EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E3EmH2 ,'E3EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E4EmH2 ,'E4EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E5EmH2 ,'E5EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E6EmH2 ,'E6EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E7EmH2 ,'E7EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E8EmH2 ,'E8EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E9EmH2 ,'E9EmH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E1HaH2 ,'E1HaH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E2HaH2 ,'E2HaH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E3HaH2 ,'E3HaH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',E4HaH2 ,'E4HaH2(NChaH2) ')
++SELF,IF=TESTNTUP.
+         CALL HBNAME(NTUP,'Hemi2 ',CorCH2 ,'CorCH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',ElecH2 ,'ElecH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',FiBoH2 ,'FiBoH2(NChaH2) ')
+         CALL HBNAME(NTUP,'Hemi2 ',HPCCh2 ,'HPCCH2(NChaH2) ')
++SELF.
+
+*   book variables assiciated to neutrals hemisphere 2
+         CALL HBNAME(NTUP,'NeuH2 ',NrEmNH2 ,'NrEmNH2[0,7]:I ')
+         CALL HBNAME(NTUP,'NeuH2 ',EEmNH2  ,'EEmNH2(NrEmNH2)')
+         CALL HBNAME(NTUP,'NeuH2 ',THeNH2  ,'THeNH2(NrEmNH2)')
+         CALL HBNAME(NTUP,'NeuH2 ',FiNH2   ,'FiNH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',McoNH2  ,'McoNH2(NrEmNH2) ')
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'NeuH2 ',E1NH2   ,'E1NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E2NH2   ,'E2NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E3NH2   ,'E3NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E4NH2   ,'E4NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E5NH2   ,'E5NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E6NH2   ,'E6NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E7NH2   ,'E7NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E8NH2   ,'E8NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',E9NH2   ,'E9NH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',NrHaNH2 ,'NrHaNH2[0,5]:I ')
+         CALL HBNAME(NTUP,'NeuH2 ',EHaHH2  ,'EHaHH2(NrHaNH2)')
+         CALL HBNAME(NTUP,'NeuH2 ',THeHH2  ,'THeHH2(NrHaNH2)')
+         CALL HBNAME(NTUP,'NeuH2 ',FiHH2   ,'FiHH2(NrHaNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',McoHH2  ,'McoHH2(NrEmNH2) ')
+         CALL HBNAME(NTUP,'NeuH2 ',NHaLNH2 ,'NHaLNH2(NrHaNH2)[0,16]:I ')
++SELF,IF=TESTNTUP.
+         CALL HBNAME(NTUP,'NeuH2 ',corfH2  ,'corfH2(NrEmNH2)')
++SELF.
+
+*   book variables assiciated with the tracks made within the VD
+*        unassociated VD hits, hemisphere 2
++SELF,IF=VUBBNTUP.
+         CALL HBNAME(NTUP,'VdAsH2',NrAsH2 ,'NrAsH2[0,6]:I')
+         CALL HBNAME(NTUP,'VdAsH2',xP1VdH2,'xP1VdH2(NrAsH2)')
+         CALL HBNAME(NTUP,'VdAsH2',yP1VdH2,'yP1VdH2(NrAsH2)')
+         CALL HBNAME(NTUP,'VdAsH2',RP1VdH2,'RP1VdH2(NrAsH2)')
+         CALL HBNAME(NTUP,'VdAsH2',PhiVdH2,'PhiVdH2(NrAsH2)')
++SELF.
+
+
+       RETURN
+       END 
+
+*
++DECK,tmbook.
+************************************************************
+*                                                          *
+* TMBOOK                                                   *
+*                                                          *
+* Purpose: book histograms and ntuples                     *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMBOOK
+C
+C
+*
+       CALL HBOOK1(50,' ang p(sim)-P(rec) ELECTRON '
+     +           ,50,-0.1,1.5,0.)
+       CALL HBOOK1(51,' |p(sim)|-|P(rec)| ELECTRON '
+     +           ,50,-20.,20.,0.)
+       CALL HBOOK1(52,' ang p(sim)-P(ref) ELECTRON '
+     +           ,50,-0.1,1.5,0.)
+       CALL HBOOK1(53,' |p(sim)|-|P(ref)| ELECTRON '
+     +           ,50,-20.,20.,0.)
+*
+       CALL HBOOK1(1,'# good prongs per event'
+     +         ,20,0.,20.,0.)
+       CALL HBOOK1(2,'# good tracks per event'
+     +         ,20,0.,20.,0.)
+       CALL HBOOK1(3,' cos theta leading tracks '
+     +         ,50,0.,1.,0.)
+       CALL HBOOK1(4,' z-impact parameter '
+     +         ,150,-7.5,7.5,0.)
+       CALL HBOOK1(5,' R-impact parameter '
+     +         ,200,-0.5,0.5,0.)
+       CALL HBOOK1(6,' isolation angel '
+     +         ,100,100.,180.,0.)
+       CALL HBOOK1(7,' visible energy '
+     +         ,100, 0.,150.,0.)
+       CALL HBOOK1(8,' Erad '
+     +         ,100,0.,100.,0.)
+       CALL HBOOK1(9,' Prad '
+     +         ,100,0.,100.,0.)
+       CALL HBOOK1(10,' acolinearity '
+     +         ,100,0.,50.,0.)
+       CALL HBOOK1(11,' ptmiss '
+     +         ,100,0.,100.,0.)
+       CALL HBOOK1(12,' diference in Z impact parameters '
+     +         ,50,-5.,5.,0.)
+
+       CALL HBOOK2(100,'E1 vs E2 (all)'
+     +          ,50,0.,100.,50,0.,100.,0.)
+       CALL HBOOK2(101,'P1 vs P2 (all)'
+     +          ,50,0.,100.,50,0.,100.,0.)
+       CALL HBOOK2(105,' topology (good tracks) '
+     +          ,14,0.,14.,14,0.,14.,0.)
+       CALL HBOOK2(106,' topology (prongs) '
+     +          ,20,0.,20.,20,0.,20.,0.)
+    
+*
+      RETURN
+      END
+
++DECK,tpupil.
+************************************************************
+*                                                          *
+* TPUPIL                                                   *
+*                                                          *
+* Purpose: used by TAUPLUS to analyse the PILOT record.    *
+*                                                          *
+* Input: PILOT - pilot record                              *
+* Output: NEED - PHDST flag ( if 0, skip event, if 1 keep )*
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TPUPIL(PILOT,NEED)
+C
+C   Arguments
+C
+C      INTEGER PILOT(*),NEED
+C
+C   Executables
+C
+      CALL TMPILT(PILOT)
+      NEED=1
+C
+C
+      RETURN
+      END
+*
++DECK,tmpilt.
+************************************************************
+*                                                          *
+* TMPILT                                                   *
+*                                                          *
+* a TAUMINATOR DST Analysis routine                        *
+*                                                          *
+* Author: D. M. Edsall                                     *
+*                                                          *
+* Created: 16/02/94                                        *
+*                                                          *
+*                                                          *
+* Purpose: extract information from the pilot              *
+*                                                          *
+*                                                          *
+* Input: IUPILT - pilot record                             *
+*                                                          *
+* Output: PILINF - pilot record information                *
+*                  ( see below for information )           *
+*                                                          *
+************************************************************
+C
+C
+      SUBROUTINE TMPILT(IUPILT)
+C
+C
+C
+C   Arguments
+C
+      INTEGER IUPILT(*)
+C
+C   Global declarations
+C
+        REAL OUT1
++CDE,TPCDE.
++CDE,TMPILI.
+C
+C**********************************************************************
+C
+C           I                     PILINF(I)                   Blocklet
+C     ----------------------------------------------------------------
+C           1                 Run number                        DAS
+C           2                 File sequence number
+C           3                 Event number
+C           4                 Event date
+C           5                 Event time
+C
+C           6                 X primary                        DANA
+C           7                 Y primary
+C           8                 Z primary
+C           9                 Energy CM LEp from DELANA
+C          10                 Processing date
+C          11                 Processing time
+C          12                 B field
+C          13-38              Detector status
+C                             ( see pilot record description )
+C
+C          39                 Event type                       DPHA
+C                             ( = 1 for tau )
+C          40-45              see description words 5-10
+C          46                 Team tag
+C          47-77              see description words 12-42
+C
+C          78                 Date of update                    LEP
+C          79                 Time of update
+C          80                 Fill number
+C          81                 LEP status ( LEP )
+C          82                 LEP status ( DELPHI )
+C          83                 Collimators
+C          84                 Number of e+ bunches
+C          85                 LEP ring energy
+C          86                 Ring E flag
+C          87                 Magnet current
+C          88                 B field ( NMR )
+C          89-92              e+ currents
+C          93-96              e- currents
+C
+C          97                 Team 3 tag                        TAG
+C          98                 Team 3 accept
+C
+C**********************************************************************
+C
+C
+C  DAS
+C
+C eyal
+         CALL CHECK_ZERO(LTPPDS,20,OUT1)
+
+      IF ( LTPPDS(1).EQ. 0 ) THEN
+c      IF ( OUT1.EQ.0 ) THEN      
+         PILINF(1)=IUPILT(LTPPDS(1)+6)
+         PILINF(2)=IUPILT(LTPPDS(1)+7)
+         PILINF(3)=IUPILT(LTPPDS(1)+9)
+         PILINF(4)=IUPILT(LTPPDS(1)+10)
+         PILINF(5)=IUPILT(LTPPDS(1)+11)
+      ENDIF
+C
+C
+C  DANA
+C eyal
+      IF ( LTPPDN(1).NE.0 ) THEN
+         PILINF(6)=IUPILT(LTPPDN(1)+8)
+         PILINF(7)=IUPILT(LTPPDN(1)+9)
+         PILINF(8)=IUPILT(LTPPDN(1)+10)
+         PILINF(9)=IUPILT(LTPPDN(1)+13)
+         PILINF(10)=IUPILT(LTPPDN(1)+14)
+         PILINF(11)=IUPILT(LTPPDN(1)+15)
+         PILINF(12)=IUPILT(LTPPDN(1)+16)
+         DO 10,I=0,3
+            PILINF(13+I)=IUPILT(LTPPDN(1)+26+I)
+   10    CONTINUE
+         DO 20,I=0,8
+            PILINF(17+I)=IUPILT(LTPPDN(1)+31+I)
+   20    CONTINUE
+         DO 30,I=0,12
+            PILINF(26+I)=IUPILT(LTPPDN(1)+41+I)
+   30    CONTINUE
+       ENDIF
+C
+C
+C  DPHA
+C
+C
+      IF ( LTPPDH(1) .NE. 0 ) THEN
+         PILINF(39)=IUPILT(LTPPDH(1)+10)
+         DO 40,I=0,37
+            PILINF(40+I)=IUPILT(LTPPDH(1)+5+I)
+   40    CONTINUE
+      ENDIF
+C
+C
+C  LEP
+C
+C eyal
+      IF ( LTPPLP(1) .NE. 0 ) THEN
+         PILINF(78)=IUPILT(LTPPLP(1)+4)
+         PILINF(79)=IUPILT(LTPPLP(1)+5)
+         PILINF(80)=IUPILT(LTPPLP(1)+6)
+         PILINF(81)=IUPILT(LTPPLP(1)+7)
+         PILINF(82)=IUPILT(LTPPLP(1)+8)
+         PILINF(83)=IUPILT(LTPPLP(1)+10)
+         PILINF(84)=IUPILT(LTPPLP(1)+11)
+         PILINF(85)=IUPILT(LTPPLP(1)+12)
+         PILINF(86)=IUPILT(LTPPLP(1)+13)
+         PILINF(87)=IUPILT(LTPPLP(1)+14)
+         PILINF(88)=IUPILT(LTPPLP(1)+15)
+         PILINF(89)=IUPILT(LTPPLP(1)+24)
+         PILINF(90)=IUPILT(LTPPLP(1)+25)
+         PILINF(91)=IUPILT(LTPPLP(1)+26)
+         PILINF(92)=IUPILT(LTPPLP(1)+27)
+         PILINF(93)=IUPILT(LTPPLP(1)+28)
+         PILINF(94)=IUPILT(LTPPLP(1)+29)
+         PILINF(95)=IUPILT(LTPPLP(1)+30)
+         PILINF(96)=IUPILT(LTPPLP(1)+31)
+      ENDIF
+C
+C
+C  TAG
+C
+C
+      IF ( LTPPDT(1) .NE. 0 ) THEN
+         PILINF(97)=IUPILT(LTPPDT(1)+7)
+         PILINF(98)=IUPILT(LTPPDT(1)+8)
+      ENDIF
+C
+C
+C
+C
+      RETURN
+      END
+
+
++DECK,TPRUN.
+************************************************************
+*                                                          *
+* TPRUN                                                    *
+*                                                          *
+* Purpose: analyze a DELPHI event                          *
+*
+************************************************************
+C
+      SUBROUTINE TPRUN(GOODEV,EVTSEL)
+C
+C   Global declarations
+C
++CDE,UXCOM.
++CDE,UXCEVT.
++CDE,TPCDE.
++CDE,TPIOUN.
++CDE,TMIOUN.
++CDE,TMCARS.
++CDE,TMPILI.
++CDE,TMEINF.
++CDE,TMCUTS.
++CDE,TMSDES.
+*
+C   Functions
+C
+      INTEGER TPDSTV
+      INTEGER TMBTRF
+      INTEGER TPHEMI
+      INTEGER TPTFIL
+      INTEGER TMTAU
+         REAL TPPMAX
+         REAL TPPVIS
+         REAL TPPMIS
+         REAL TPTMAX
+         REAL TPTMLT
+         REAL TPPRAD
+         REAL TPERAD
+         REAL TPISOA
+         REAL TPEVIS
+      LOGICAL TMDIMU
+C
+C   Local declarations
+C
+      PARAMETER ( RADTOD=57.29578 )
+      LOGICAL GOODEV, EVTSEL
+C
+C      ******************* SIMULATION INFORMATION **********************
+C
+C*     NMCTMX = maximum number of tracks which have been accepted
+C
+C*                PTAU: array filled for primary tau's :
+C                    ( i=1 for tau- , i=2 for tau+ )
+C      PTAU(1:3,i) -> p, theta , phi
+C      PTAU(4:5,i) -> Charge , helicity
+C      PTAU(6,i)   -> Decay mode (KORALZ conv.)
+C                        1 = electron
+C                        2 = muon
+C                        3 = pion
+C                        4 = rho
+C                        5 = a1
+C                        6 = kaon
+C                        7 = K*
+C                        8 = multi-pion
+C      PTAU(7,i)   -> Charged pion multiplicity
+C
+C*     NMCTRK = number of final state MC tracks
+C
+C*                PMCTRK: array filled for all final state particles
+C                     ( ITRACK = current track number )
+C      PMCTRK(1:3,ITRACK) -> p , theta , phi
+C      PMCTRK( 4 ,ITRACK) -> Particle ID        (DELSIM Convention)
+C      PMCTRK( 5 ,ITRACK) -> Particle ID mother (DELSIM Convention)
+C      PMCTRK( 6 ,ITRACK) -> Charge
+C      PMCTRK( 7 ,ITRACK) -> Hemisphere to which this track is assigned
+C
+C
+C*     NDALITZ(2) = Number of Dalitz e+/e- tracks in the tau decay
+C
+C*     NHM(1,I) -> Number of charged + neutral tracks in hemisphere I
+C      NHM(2,I) -> Number of charged tracks in hemisphere I
+C      NHM(3,I) -> Number of charged tracks in hemisphere I without
+C                  conversion tracks
+C
+      PARAMETER(NMCTMX=25)
+      REAL PTAU(7,2),PMCTRK(7,NMCTMX)
+      INTEGER IQQ(2),NDALITZ(2),NHM(3,2)
+      LOGICAL FOUND
+      LOGICAL TPSQQ
+C
+C     ************** TRACK and NEUTRAL INFORMATION *******************
+C
+C
+C*     TRACK(1)  = Px
+C      TRACK(2)  = Py
+C      TRACK(3)  = Pz
+C      TRACK(4)  = P
+C      TRACK(5)  = Pphi 
+C      TRACK(6)  = Ptheta 
+C      TRACK(7)  = dP
+C      TRACK(8)  = Radius of the first measured point
+C      TRACK(9)  = charge (0= neutral, 1=pos, 2=neg,3=unknown)
+C      TRACK(10) = track length
+C      TRACK(11) = DST mass code
+C      TRACK(12) = Chi2 of the TK fit
+C      TRACK(13) = Number of degrees of freedom of the TK fit
+C
+C*     TRERR(1:4)= error in p, phi, theta and E
+C
+C*     Estand    = energy of the standard module
+C
+      REAL  TRACK(13,NPAMAX),TRERR(4,NPAMAX), Estand(NPAMAX)
+
+C*     PERIGE(1)  = epsilon
+C      PERIGE(2)  = z impact parameter
+C      PERIGE(3)  = theta in rad.
+C      PERIGE(4)  = phi in rad.
+C      PERIGE(5)  = curvature
+C      PERIGE(6)  = error on epsilon
+C      PERIGE(7)  = error on z
+C      PERIGE(8)  = error on theta
+C      PERIGE(9)  = error on phi
+C      PERIGE(10) = error on curvature
+C
+C*     DISTVT(1) = distance to the vertex in the x-y plane
+C      DISTVT(2) = distance to the vertex in the z-direction
+C
+      REAL PERIGE(10,NPAMAX),DISTVT(2,NPAMAX)
+C
+C*     IFILT  = 1 for good charged tracks 
+C             = 2 for EM neutrals
+C             =20 for Had neutrals
+C             =22 for bad charged tracks with EM and HAD energy associated
+C             = 0 for bad charged tracks
+C
+      INTEGER IFILT(NPAMAX)
+C
+C*     IHEMI = hemisphere assignmenty for each track, where the hemispsheres
+C              are defined by the plane perpendicular to the track axis
+C
+      INTEGER IHEMI(NPAMAX)
+C
+C
+C               >>>>>>>> CHARGED TRACKS <<<<<<<<<
+C
+C*     ECHATR(1)  = energy of the first E.M. shower
+C      ECHATR(2)  = x \
+C      ECHATR(3)  = y  |-> position of the first E.M. shower
+C      ECHATR(4)  = z /
+C      ECHATR(5)  = nr. of E.M. showers ass. to the track
+C      ECHATR(6)  = total electromagnetic energy ass. to the track
+C      ECHATR(7)  = energy of the first had. shower
+C      ECHATR(8)  = x \
+C      ECHATR(9)  = y  |-> position of the first had. shower
+C      ECHATR(10) = z /
+C      ECHATR(11) = nr. of had. showers ass. to the track
+C      ECHATR(12) = total hadronic energy ass. tot the track
+C
+C*     ECONE(1) = EM energy in the cone around track iPA
+C      ECONE(2) = nr of EM showers in that cone
+C      ECONE(3) = HAD energy in the cone around track iPA
+C      ECONE(4) = nr of HAD. showers in the cone
+C
+      REAL ECHATR(12,NPAMAX)
+      REAL ECONE(4,NPAMAX)
+C
+C
+C                >>>>>>>>>>>>>> NEUTRALS <<<<<<<<<<<<<<<
+C
+C*     ENEUTR(1) = energy of the neutral ( first shower only )
+C      ENEUTR(2) = x\
+C      ENEUTR(3) = y |-> position of the shower ( first shower only )
+C      ENEUTR(4) = z/
+C      ENEUTR(5) = nr. of the detector ( 9 = HPC, 13 = HAC/HAB ,
+C                                       23 = SAT , 26 = EMF )
+C
+      REAL ENEUTR(5,NPAMAX)
+C
+C
+C         >>>>>>>>>>>>>> INFORMATION FROM ELECID  <<<<<<<<<<<<<<<
+C
+C*     ELEC(1) = EELEC = best estimate for the electron energy at the
+C                 vertex (only form 93C processing).  
+C      ELEC(2) = ELPXF = Px refited electron momentum
+C      ELEC(3) = ELPYF = Py refited electron momentum
+C      ELEC(4) = ELPZF = Pz refited electron momentum
+C      ELEC(5) = P refited electron momentum
+C      ELEC(6) = theta refited electron momentum
+C      ELEC(7) = phi refited electron momentum
+C      ELEC(8) = ELPHIRO = Phi position at the HPC Boarder from 
+C                 TRK-extrapolation (only form 93C processing).
+C      ELEC(9) = ELEFLG = HPC crack flag : -1: outside HPC range,
+C                 0:inside HPC,1:phi crack,2:theta crack,3: phi/theta crack
+C
+C*     LPAFOT(ifot,-2:28) = pointers to PA's identified as comming from 
+C                radiative electrons/positrons.
+C             
+C
+       REAL ELEC(9,NPAMAX)
+       INTEGER LPAFOT(NPAMAX,-2:28)
+C
+C         >>>>>>>>>>>>>> SHOWER AND LAYER ENERGIES <<<<<<<<<<<<<<
+C
+C*     EMSH(  1 )  =  shower energies summed over all showers
+C      EMSH( 2:3)  =  theta, phy of the sh. position \
+C      EMSH(  4 )  =  DST mass code                   | of the first shower
+C      EMSH( 5:6)  =  theta, phi direction of the sh. | or of shower n
+C      EMSH(  7 )  =  detector module                /
+C      EMSH(8:16)  =  HPC layer energies summed over all ass.sh.
+C                     or HPC layer energies for shower n
+C      EMSH( 17 )  =  nr of associated showers
+C
+C*     HASH(  1  ) = shower energies summed over all showers
+C      HASH( 2:3 ) = theta, phy of the sh. position \
+C      HASH(  4  ) = DST mass code                   | of the first shower
+C      HASH(  5  ) = detector module                /  or of shower n
+C      HASH( 6:9 ) = HAC layer energies summed over all ass.sh.
+C                    or HAC layer energies of shower n
+C      HASH(10:13) = Number of towers layers summed over all ass.sh.
+C                    or number of tower layers for shower n
+C      HASH(  14 ) = nr of associated showers
+C
+      REAL EMSH(17,NPAMAX), HASH(14,NPAMAX)
+C
+C*     CORRFACT = Energy correction factor :
+C                 corrected energy / HPC-module energy.
+C*     PAPHOT(-2:28) = array with pointers to the modules of photons
+C                     identified by ELEPHANT as comming form radiative
+C                     electrons/positrons.
+C
+       REAL CORRFACT(NPAMAX)
+       INTEGER PAPHOT(NPAMAX,-2:28)
+C
+C       >>>>>>>>>>>>>>>>> TOF, VD and OD HITS <<<<<<<<<<<<<<<<<<
+C
+C*     TOFINF(1)  = r-phi
+C      TOFINF(2)  = z
+C      TOFINF(3)  = time of flight ( TOF )
+C      TOFINF(4)  = error in TOF
+C      TOFINF(5)  = extrapolated Z coordinate
+C      TOFINF(6)  = external ADC
+C      TOFINF(7)  = internal ADC
+C      TOFINF(8)  = external TDC
+C      TOFINF(9)  = internal TDC
+C      TOFINF(10) = PJTAG TOF word
+C      TOFINF(11) = counter number
+C
+C
+C*     NVDHIT = total number of VD hits in the event
+C*     NVDTD  = number of VD TD's associated to the track pointed to
+C               LTPPA
+C
+C*     NRREAS = nr of assocaiations foint in the unass. hits
+C              (an association = at least 3 VD TD's on a straight
+C               line (withing a certain angular aceptance))
+C*     RAVDTR(1:3,ireas) = x,y,R of first point phi of found association
+C      RAVDTR( 4 ,ireas) = phi of found association
+C      RAVDTR( 5 ,ireas) = hemisphere of the foind association 
+C                        ireas = 1 , NRREAS
+C
+C
+C*     NODHIT        = total number of OD hits in the event
+C*     ODHIT(IHIT,1) = phi coordinat of the hit
+C      ODHIT(IHIT,2) = z coordinat of the hit
+C*     NODA   = number of associated OD hits associated to
+C               the extrapolated track
+C
+C
+C*     DEDX(2,iPA)  = dE/dx ; sigma on dE/dx
+C
+C
+C*     MASSAMB(iPA) is the mass ambiguety code for the particle
+C         (for the normal DST, only bits 1-4 are filed !)
+C         Muon indentification :  bits 1-5
+C           bit 1 : verry loose muon
+C           bit 2 : loose muon
+C           bit 3 : standard muon
+C           bit 4 : tight muon
+C           bit 5 : HCAL muon
+C         Electron indentification : sum bits 7 to 9
+C           sum = 0 : no identification run on this track
+C           sum = 1 : indentified as NOT to be an electron
+C           sum = 2 : very loose electron 
+C           sum = 3 : loose electron
+C           sum = 4 : standard electron
+C           sum = 5 : tight electron
+C         Electron from gamma conversion (veto): bits 10 to 12
+C           bit 10 : loose electron     
+C           bit 11 : standard electron  
+C           bit 12 : tight electron
+C         Kaon signature with RICH : sum bits  13 to 15
+C           sum = 0 : no measurement available
+C           sum = 1 : track compatible with pion 
+C           sum = 2 : loose kaon
+C           sum = 3 : standard kaon
+C           sum = 4 : tight kaon
+C         Proton signarture with RICH : sum bits 16 to 18
+C           sum = 0 : no measurement available
+C           sum = 1 : track compatible with pion
+C           sum = 2 : loose proton
+C           sum = 3 : standard proton
+C           sum = 4 : tight proton
+C         Photon identification :  sum bits 19 to 25
+C                 HPC photon
+C           sum = 1 : good HPC photon
+C           sum = 6 : HPC shower, failed transverse profile cuts
+C           sum = 7 : HPC shower, failed longitudinal profile cuts
+C           sum = 8 : HPC shower, failed both cuts
+C                 HPC photon with linked OD shower te
+C           sum = 11 : good HPC photon
+C           sum = 16 : HPC shower, failed transverse profile cuts
+C           sum = 17 : HPC shower, failed longitudinal profile cuts
+C           sum = 18 : HPC shower, failed both cuts
+C                 PHOTON CONVERSION in front of TPC
+C           sum = 21 : conversion from 2 TPC tracks (type 1 pair)
+C           sum = 22 : conversion from 2 TPC tracks (type 2 pair)
+C           sum = 23 : conversion from 2 TPC tracks (type 3 pair)
+C           sum = 24 : conversion from 1 TPC track  (type 1 pair)
+C                 PHOTON from electron RADIATIONS  behind TPC
+C           sum = 39 : photon linked to electron
+C                 PHOTON from electron RADIATIONS  in front of TPC
+C           sum = 49 : photon linked to electron
+C                 PHOTON CONVERSION behind TPC
+C           sum = 50 : conversion from 2 OD TEs with a HPC link
+C           sum = 51 : conversion from 2 OD TEs, one with HPC
+C           sum = 52 : conversion from 2 OD TEs without HPC links
+C           sum = 53 : conversion from 1 OD TE with a HPC link
+C           sum = 56 : as 53 but fialed transverse profile cuts  
+C           sum = 57 : as 53 but fialed longitudinal profile cuts  
+C           sum = 58 : as 53 but fialed both profile cuts  
+C           sum = 59 : shower linked to a OD-TE used in 50-58
+C                 PHOTON which is PART of a CLUSTER
+C           sum = 61 : good HPC photon
+C           sum = 66 : HPC shower, failed transverse profile cuts 
+C           sum = 67 : HPC shower, failed longitudinal profile cuts
+C           sum = 68 : HPC shower, failed both cutsC
+C           sum = 69 : HPC shower, rejected (from curling electron)
+C           sum = 101: good pi0 (unlikely to be a single photon).
+C         dE/dx measurement
+C           bit 29 = dE/dx
+C
+C
+C*     BLOCMU(1,iPA)= bitted word :
+C        8* tight tag+ 4* standard tag + 2* loos tag + very loos tag.
+C      BLOCMU(2,iPA)= detector label (14=MUB,30=MUF)
+C      BLOCMU(3,iPA)= # of ass layers
+C      BLOCMU(4,iPA)= global ch2
+C      BLOCMU(5,iPA)= hit patern.
+C      DIMUON = Flag which is set to .TRUE. if the event is selected
+C        as dimuon-candidate
+C
+C
+      REAL TOFINF(11,NPAMAX)
+      INTEGER NVDHIT, NVDTD(NPAMAX)
+      INTEGER NRREAS , RAVDTR(5,40)
+      PARAMETER (NODHM=500)
+      REAL ODHIT(NODHM,2)
+      INTEGER NODA(NPAMAX)
+      REAL DEDX(2,NPAMAX)
+      REAL BLOCMU(5,NPAMAX)
+      LOGICAL DIMUON
+      INTEGER MASSAMB(NPAMAX)
+C
+C
+C      ******************** GLOBAL EVENT INFORMATION ****************
+C
+C*     THRXYZ = the direction of the thrust axis in Cartesian coordinates
+C*     THRPOL = the direction of the thrust axis in polar coordinates
+C
+      REAL THRXYZ(3),THRPOL(3)
+C
+C*     LT(I)  = the index in array TRACK of the leading track in
+C                  hemisphere I
+C
+      INTEGER LT(2)
+C
+C*     EEMHM  = EM energy ass.to hemisphere i, i=1,2
+C
+C*     NEMHM  = number of EM showers in hemisphere i, i=1,2
+C
+      REAL     EEMHM(2)
+      INTEGER  NEMHM(2)
+C
+C*     NTOPOL(1) = number of good tracks in hemisphere 1
+C      NTOPOL(2) = number of electromagnetic neutrals in hemisphere 1
+C      NTOPOL(3) = number of hadronic neautrals in hemisphere 1
+C      NTOPOL(4) = number of prongs ( good + bad tracks ) in hemisphere 1
+C      NTOPOL(5) = number of good tracks in hemisphere 2
+C      NTOPOL(6) = number of electromagnetic neutrals in hemisphere 2
+C      NTOPOL(7) = number of hadronic neautrals in hemisphere 2
+C      NTOPOL(8) = number of prongs ( good + bad tracks ) in hemisphere 2
+C
+C
+      INTEGER NTOPOL(8)
+C
+C
+*   EVTINFO : 20 dimensional array with global event variables.
+**
+*      EVTINFO(1)  = run number
+*      EVTINFO(2)  = event number
+*      EVTINFO(3)  = fill sequance
+*      EVTINFO(4)  = Run quality
+*      EVTINFO(5)  = LEP CM energy (from PILOT)
+*      EVTINFO(6)  = thrust value
+*      EVTINFO(7)  = phi angle of thrust axis
+*      EVTINFO(8)  = theta angle of thrust axis
+*      EVTINFO(9)  = visible momentum of the event
+*      EVTINFO(10) = missing transverse momentum in this event
+*      EVTINFO(11) = Prad
+*      EVTINFO(12) = visible energy of the event.
+*      EVTINFO(13) = Erad
+*      EVTINFO(14) = acollinearity
+*      EVTINFO(15) = acoplanarity
+*      EVTINFO(16) = isolation angle
+*      EVTINFO(17) = total electromagnetic energy 
+*      EVTINFO(18) = total hadronic energy 
+*      EVTINFO(19) = total electromagnetic energy associated to neutrals
+*      EVTINFO(20) = total hadronic energy associated to neutrals
+*
+       REAL EVTINFO(20) 
+C
+C     Array used to select tau-events
+C      IEVTIN(1)  = Number of prongs in this event
+C      IEVTIN(2)  = Number of tracks in hemisphere 1
+C      IEVTIN(3)  = Number of tracks in hemisphere 2
+C      IEVTIN(4)  = number of good charged tracks in this event
+C      REVTIN(5)  = polar angle ( theta ) of the leading track in
+C                   hemisphere 1
+C      REVTIN(6)  = polar angle ( theta ) of the leading track in
+C                   hemisphere 2
+C      REVTIN(7)  = Z coordinate of the perigee of the leading track in
+C                   hemisphere 1
+C      REVTIN(8)  = Z coordinate of the perigee of the leading track in
+C                   hemisphere 2
+C      REVTIN(9)  = impact parameter of the perigee of the leading track in
+C                   hemisphere 1
+C      REVTIN(10) = impact parameter of the perigee of the leading track in
+C                   hemisphere 2
+C      REVTIN(11) = Isolation angle
+C      REVTIN(12) = Visible energy of the event
+C
+C           Additional definitions to define tau tau events
+C
+C      REVTIN(14) = radial energy of the event normalised to Ebeam
+C      REVTIN(15) = radial momentum of the event normalised to Ebeam
+C      REVTIN(16) = acollinearity
+C      REVTIN(17) = missing transverse momentum
+C
+C           Miscellaneous definitions for the ntuple
+C
+C      REVTIN(19) = minimum cosine of all tracks
+C
+C           Non statndard selection on the impact parameters
+C
+C      REVTIN(20) = number of vd hits associated to the leading track in
+C                   hemisphere 1
+C      REVTIN(21) = number of vd hits associated to the leading track in
+C                   hemisphere 2
+C      REVTIN(22) = theta angle of the thrust axcis
+C      REVTIN(23) = phy angle of the thrust axcis
+C      REVTIN(24) = 1. for a dimuon candidate event, 0. for other events
+C
+C
+
+C      The logical variable WRTUP is set TRUE if the event passes the cuts
+C      defined for writing the PJTAG ntuple
+C
+      LOGICAL WRTUP
+
+
+C     ***************************************************************
+C
+C
+C
+C   Executables
+C
+C   MC data ?
+C
+      LUNDB=TPUDB
+      ISSIM=.FALSE.
+      IF ( PILINF(1) .LT. 0 ) ISSIM=.TRUE.
+C
+C  DST versie ?
+C
+      IDSTV=TPDSTV()
+C
+C   Write out for the first event only which kind of data you analyse.
+C
+      IF (NREVT(1) .LT. 1) THEN 
+        noldrun = 0
+        noldfilsq = 0
+        WRITE(37,1301)
+        IF (ISSIM) THEN
+           WRITE(TPUDB,*) ' **** ANALYSING SIMULATION DATA ****'
+        ELSE 
+           WRITE(TPUDB,*) ' **** ANALYSING REAL DATA ****'
+        ENDIF
+        IF (LTPPID(1).NE.0) THEN
+           WRITE(TPUDB,*) ' **** LONGDST ****'
+        ELSE
+           WRITE(TPUDB,*) ' **** NORMAL DST ****'
+        ENDIF
+        WRITE(TPUDB,*)
+        WRITE(TPUDB,*) 'PROCESSING DATE :',NINT(PILINF(4)),
+     &     ' ***   DST version :',IDSTV
+      ENDIF
+C
+C    Write a list of analysed runs and fillsequences on file ftn93
+C
+      IF ((nrun.NE.noldrun).OR.(nfilsq.NE.noldfilsq)) THEN
+         WRITE(37,1302) nrun,nfilsq
+         noldrun=nrun
+         noldfilsq=nfilsq
+      ENDIF
+ 1301  FORMAT(' **** ANALYSED RUNS AND FILSEQUENCES ****'/) 
+ 1302  FORMAT(2I8)
+C
+C     skip events where NPA is bigger then 100 !
+C
+      IF (NPA.GT.100)  THEN
+          WRITE(TPUDB,*) ' *** MORE PAs ON THE DST THEN ALLOWED !! ***'
+          WRITE(TPUDB,*) ' Nr of PAs =', NPA,' > max nr of PAs : 100'
+          RETURN
+      ENDIF
+C
+C   Analyse  simulation information if any
+C   ======================================
+C
+      IF ( ISSIM ) THEN
+C
+C   Initialize simulation variables
+          FOUND=.FALSE.
+          ECMLEP=0.0
+          CALL VZERO(IQQ,2)
+          CALL VZERO(PTAU,7*2)
+          CALL VZERO(PMCTRK,7*NMCTMX)
+          CALL VZERO(NDALITZ,2)
+          CALL VZERO(NHM,6)
+C
+C   Reassociate reconstructed and simulated charged tracks
+C
+C         CALL TKREAS(1,BFIELD)
+C
+C   get pointers to simulation ZEBRA banks
+C
+         CALL TPSGLQ(LUNDB,LSH,LQINE,LQFIE,LQFFB,ECMSIM,FOUND)
+         ECMSIM = ECMSIM * 2
+C
+C   Skip events with no simulation history bank and qqbar events
+C
+         IF ( ( .NOT. FOUND ) .OR. ( TPSQQ(LQFFB,IQQ) ) )  GOTO 50 
+C
+C   Get information on simulated taus and their final state tracks
+C
+         CALL TPSTIN(LSH,NMCTMX,PTAU,PMCTRK,NMCTRK,NDALITZ,NUMTAU)
+C
+C   Get information on the topology of these events
+C 
+         CALL TPSTOP(NMCTMX,PTAU,PMCTRK,NMCTRK,NDALITZ,NHM)
+C
+C   Sort tracks by momentum, hemisphere and charge
+C   ( charged tracks come before neutrals )
+C
+         CALL TPSSOR(NMCTMX,PTAU,PMCTRK,NHM,NMCTRK)
+C
+  50  CONTINUE
+C
+C update statistics of analysed simulated events
+C
+      DO 51, i=1,2
+        IGENDEC(PTAU(6,i)) = IGENDEC(PTAU(6,i)) + 1
+  51  CONTINUE
+      CALL STAT_TOPO(nhm(3,1), nhm(3,2), NrAllMc)
+C
+      ENDIF
+C
+
+C   Analyze the reconstructed data
+C   ===============================
+C
+C   Count the number of events analysed
+C
+      NREVT(1) = NREVT(1) + 1
+
+C
+C   Initialize event variables
+C
+      CALL VZERO(TRACK ,13*NPAMAX)
+      CALL VZERO(TRERR ,4 *NPAMAX)
+      CALL VZERO(ESTAND,   NPAMAX)
+      CALL VZERO(PERIGE,10*NPAMAX)
+      CALL VZERO(DISTVT,2 *NPAMAX)
+      CALL VZERO(ECHATR,12*NPAMAX)
+      CALL VZERO(ENEUTR,5 *NPAMAX)
+      CALL VZERO(EMSH  ,17*NPAMAX)
+      CALL VZERO(HASH  ,14*NPAMAX)
+      CALL VZERO(corrfact, NPAMAX)
+      CALL VZERO(TOFINF,11*NPAMAX)
+      CALL VZERO(DEDX  ,2 *NPAMAX)
+      CALL VZERO(ODHIT ,2 *NODHM )
+      CALL VZERO(BLOCMU,5 *NPAMAX)
+      CALL VZERO(MASSAMB,  NPAMAX)
+      CALL VZERO(IFILT ,   NPAMAX)
+      CALL VZERO(IHEMI ,   NPAMAX)
+      CALL VZERO(ECONE ,4 *NPAMAX)
+      CALL VZERO(ELEC  ,9 *NPAMAX)
+      CALL VZERO(PAPHOT,31*NPAMAX)
+      CALL VZERO(THRXYZ,3)
+      CALL VZERO(THRPOL,3)
+      CALL VZERO(LT    ,2)
+      CALL VZERO(EEMHM ,2)
+      CALL VZERO(NEMHM ,2)
+      CALL VZERO(NTOPOL,8)
+      CALL VZERO(EVTINFO,20)
+      
+
+      NGOOD=0
+      NPRONG = 0
+
+C
+C  Get run quality information
+C   
+      IF ( .NOT. ISSIM ) THEN
+*           center of mass energy
+            CALL TPRQ (IYEAR,LUNRQ,LUNDB,6,NRUN,NFILSQ,ECMRQ  ,IERROR)
+*           detector status, PJTAG coded word
+            CALL TPRQ (IYEAR,LUNRQ,LUNDB,4,NRUN,NFILSQ,DETSTAT,IERROR)
+      ENDIF
+C
+C  Get luminosity file energy
+C
+      IF ( .NOT. ISSIM ) THEN
+         CALL TPLUM(IYEAR,LUNLUM,LUNDB,10,NRUN,NUMTAP,
+     +                  SATINF,IERROR)
+         ECMLUM=SATINF*2.
+      ENDIF
+C
+C  Perform particle ID
+C
+C      --> muon identification  only for normal DST.
+ccccc      IF (LTPPID(1).EQ.0) CALL MUIDENT
+C
+C  Select the PA's you need. 
+C  order the links to the PA's by momentum
+C
+      CALL TMSELPA(LPAFOT)
+C
+C ***  Get charged track and neutral information 
+C      ------------------------------------------
+C
+C    Get the OD hits form the OD timing bank.
+C
+      CALL TPODST(NODHIT,ODHIT,IERROD)
+C
+      DO 100,IPA=1,NPA
+C
+          IPAPA = LTPDQ(IPA,-1)
+          IPAPV = LTPDQ(IPA,-2)
+
+C   Get info from standard blocklet
+C          TRERR is not correctly filled for LONG ans SHORT DST!!
+C
+          CALL TPTRAK(LUNDB,LTPSTA(IPA),TRACK(1,IPA),TRERR(1,IPA))
+          ESTAND(iPA) = Q(LTPSTA(IPA)+5)
+C
+C  Calculate error on p, phy and theta :
+C
+          CALL TMTRER(LUNDB,LTPSTA(IPA),LTPTRA(iPA),
+     +      TRACK(1,IPA),TRERR(1,IPA))
+C
+C   Get shower information for charged and neutral tracks
+C
+          IF ( TRACK(9,IPA) .GT. 0.5 )  THEN
+              CALL TPECTR(LUNDB,LTPEMC(IPA),LTPHCA(IPA),
+     +                    ECHATR(1,IPA))
+              CORRFACT(iPA) = 1.
+              IELTAG = 0 
++SELF,IF=ELEPHANT.
+C             Get electron identification information and corrected HPC E
+C             Take EHPCF as correct energy :
+              CALL TM_ELEC(iPA,LPAFOT,IELTAG,ECOR,ELEC(1,iPA),
+     +               MECODE,IRAD)
+              IF (ECHATR(6,ipa).NE.0) THEN 
+                CORRFACT(iPA) = ECOR/ECHATR(6,ipa)
+                ECHATR(6,ipa) = ECOR 
+              ENDIF
+C             Use the refitted momentum for radiative electrons/positrons
+              IF (IRAD.EQ.1) THEN  
+                ECHATR(6,ipa)= ECOR
+                IF (IDSTV .GE. 310)  THEN     ! From 93C processing onwards
+                  TRACK(1,ipa) = ELEC(2,ipa)
+                  TRACK(2,ipa) = ELEC(3,ipa)
+                  TRACK(3,ipa) = ELEC(4,ipa)
+                  TRACK(4,ipa) = ELEC(5,ipa)
+                  TRACK(5,ipa) = ELEC(6,ipa)
+                  TRACK(6,ipa) = ELEC(7,ipa)
+                ENDIF
+              ENDIF  
++SELF.
+          ELSE
+              CALL TPENTR(LUNDB,IPAPA,LTPSTA(IPA),LTPEMC(IPA),
+     +                    LTPHCA(IPA),ENEUTR(1,IPA))
+              CORRFACT(iPA) = 1.
++SELF,IF=ELEPHANT.
+C             Get corrected neutral HPC energies in the standard module.
+              IF (ENEUTR(1,ipa) .NE.0) THEN
+                CORRFACT(iPA) = Estand(iPA)/Eneutr(1,iPA)
+                ENEUTR(1,IPA) = ESTAND(iPA)
+              ENDIF   
++SELF.
+              IF ( ENEUTR(5,IPA) .EQ. 13 ) THEN
+                  IFILT(IPA)=20
+              ELSE
+                  IFILT(IPA)=2
+              ENDIF
+          ENDIF
+C
+C
+C   Get electromagnetic and hadronic shower energy associated to a
+C   charged track or neutral ( the sum over all associated showers is taken)
+C
+C   HPC layer info
+C
+          CALL TPELAY(LUNDB,LTPEMC(IPA),LTPHCA(IPA),
+     +                0,EMSH(1,IPA),HASH(1,IPA))
+C
+C    Correct energies !!
+C
+          EMSH(1,IPA) = EMSH(1,IPA)*corrfact(iPA)
+            DO i=8,16
+          EMSH(i,IPA) = EMSH(i,IPA)*corrfact(iPA)
+            ENDDO
+C
+C   HAC tower info
+C
+          CALL TPELAY(LUNDB,LTPEMC(IPA),LTPHCA(IPA),
+     +                1000,EMSH(1,IPA),HASH(1,IPA))
+C
+C   Read the Mass ambiguaty code
+C
+          IF ( LTPPID(1).NE. 0 ) THEN              ! LONGDST  
+              MASSAMB(iPA) = IQ( LTPDQ(IPA,-1) + 3 )
+          ELSE                                  ! NORMAL DST
++SELF, IF=ELEPHANT.           
+              CALL TM_PHOT(IPAPA,MPCODE)   
+              MASSAMB(iPA) = MECODE + MPCODE 
++SELF.
+          ENDIF        
+C  
+C
+C   Get exctra information of charged tracks only
+C
+          IF ( TRACK(9,IPA) .GT. 0.5 )  THEN
+C
+C   Get distance to the vertex for this track
+C      Use the refitted par.if LONGDST and tagged as loos electron,
+C      module 8 otherwise.
+C
+              IF ((IELTAG.GT.0).AND.(LTPPID(1).EQ.0)) THEN
+                 LLTR = LTPETR(iPA)
+              ELSE 
+                 LLTR = LTPTRA(IPA)
+              ENDIF
+              CALL TPPERI(LLTR,PERIGE(1,IPA))
+              CALL TPDVT(ISSIM,LTPTRA(IPA),
+     +                   PERIGE(1,IPA),DISTVT(1,IPA))
+C
+C   Filter tracks and assign them quality values
+C
+              TVALS(1)=TRACK(4,IPA)
+              TVALS(2)=DISTVT(1,IPA)
+              TVALS(3)=DISTVT(2,IPA)
+              TVALS(4)=TRACK(10,IPA)
+              TVALS(5)=TRACK(8,IPA)
+              IFILT(iPA)=TPTFIL(NTCUTS,TVALS,TCUTS)
+C         Extra filter on delta(p)/p <1.
+              IF (TRERR(1,IPA).GE.TRACK(4,iPA)) IFILT(iPA)=0
+C
+C   Count good tracks and try to ressign bad tracks as good
+C   neutrals if they have associated energy
+C
+              NPRONG = NPRONG + 1
+              IF ( IFILT(IPA) .EQ. 1 ) THEN
+                  NGOOD=NGOOD+1
+              ELSE
+                  IFILT(IPA)=TMBTRF(LUNDB,IPAPA,LTPSTA(IPA),LTPEMC(IPA)
+     +                        ,LTPHCA(IPA),ECHATR(1,IPA),ENEUTR(1,IPA))
+              ENDIF
+C
+C       Get dE/dx information :  DEDx(1,iPA) = dE/dx ; 
+C                                DEDx(2,iPA) = sigma on dE/dx
+              LPA =  LTPDQ(iPA,-1)
+              CALL GETDEDX(LPA,DEDx(1,iPA),DEDx(2,iPA),NWIR,ERROR)
+C
+C       Get muon-information for normal DST
+C
+              IF (LTPPID(1).EQ.0)  THEN
+                 CALL TM_MUC(iPA , blocmu(1,iPA)) 
+                 MMCODE = blocmu(1,iPA)
+                 MASSAMB(iPA) = MASSAMB(iPA) + MMCODE
+              ENDIF
+C
+C
+        ENDIF
+C
+  100 CONTINUE
+C
+C
+C*** Only consider events with at least one good charged track
+C   ---------------------------------------------------------
+C
+      IF ( NGOOD .LE. 0 )  RETURN
+C
+C   Count the number of events with at least 1 good track
+
+      NREVT(2) = NREVT(2) + 1 
+
+C
+C *** Calculate the thrust of the event
+C     ----------------------------------
+C
+C   Fill VECP array and calculate the thrust axis
+C
+       CALL TPVECP(IFILT,NTR)
+       CALL TPTHRU(LUNDB,NTR,THRVAL,THRXYZ,THRPOL)
+
+C
+C   Get VD information
+C
+       CALL TM_VD(NVDHIT, NVDTD, NRREAS, RAVDTR, IDSTV)
+C
+C *** Hemisfaire assignment and cone energies
+C     ---------------------------------------
+C
+       DO 200,IPA=1,NPA
+C
+C   Calculate the EM and hadronic energy in a cone about each track
+C
+            CONE=CARDS(21)
+            CALL TPCONE(LTPSTA(IPA),IPA,NPAMAX,NPA,ECHATR,ENEUTR,
+     +                  CONE,ECONE(1,IPA))
+C
+C   Assign tracks and neutrals to hemispheres defined by the plane
+C   perpendicular to the thrust axis
+C
+            IHEMI(IPA)=TPHEMI(LUNDB,TRACK(1,IPA),ENEUTR(1,IPA),THRXYZ)
+C
+C
+  200  CONTINUE
+C
+C   Assign  the generated taus, their endstate tracks and neutrals
+C   to hemispheres defined by the plane perpendicular to the thrust axis
+C
+       IF (ISSIM)
+     +  CALL TPHMMC(LUNDB,PTAU,NMCTMX,NMCTRK,PMCTRK,NHM,THRXYZ)
+
+C
+C   Assign a hemisphere to found associations of VDpionts  
+C
+       CALL  HMREAS(NRREAS, RAVDTR, THRXYZ, THRPOL )
+C
+C *** Calculate event quantities
+C     ---------------------------
+C
+C   Find the leading track in each hemisphere
+C
+       CALL TPLEAD(NPAMAX,NPA,IHEMI,TRACK,IFILT,LT)
+C
+C   Get the maximum momentum of this event
+C
+       PMAX=TPPMAX(NPAMAX,TRACK,LT)
+C
+C   Get the total visible momentum of this event
+C
+       PVIS=TPPVIS(NPAMAX,NPA,IFILT,TRACK)
+C
+C   Get the total missing transverse momentum of this event
+C
+       PMIS=TPPMIS(NPAMAX,NPA,IFILT,TRACK)
+C
+C   Get the cosine of the track which has the largest polar angle
+C
+       COSTMX=TPTMAX(NPAMAX,NPA,IFILT,TRACK)
+C
+C   Get the cosine of the leading track which has the largest polar angle
+C
+       COSLTM=TPTMLT(NPAMAX,LT,TRACK)
+C
+C   Calculate Prad
+C
+       PRAD=TPPRAD(NPAMAX,TRACK,LT)
+C
+C   Calculate Erad
+C
+C      --> ERad calculated with cone energies 
+       ERAD=TPERAD(NPAMAX,ECONE,LT)
+C
+C   Get the acollinearity and acoplanarity between the resultant
+C   momenta vectors of each hemisphere
+C
+       CALL TPACOL(NPAMAX,NPA,IFILT,TRACK,IHEMI,LT,ACOL,ACOP)
+C
+C   Get the isolation angle for this event
+C
+       ANGISO=TPISOA(NPAMAX,NPA,IFILT,TRACK,IHEMI,LT)
+C
+C   Get the EM energy in a cone around the thrust axis in each hemisphere
+C
+       CALL TPEHEM(THRXYZ,CONE,NPAMAX,NPA,ECHATR,ENEUTR,
+     +               EEMHM,NEMHM)
+C
+C   Get the total charged electromagnetic energy and the total
+C   charged hadronic energy of the event.
+C
+       CALL TPETOC(NPAMAX,NPA,ECHATR,EEMCHA,EHACHA)
+C
+C   Get the total neutral electromagnetic energy and the total
+C   neutral hadronic energy of the event.
+C
+       CALL TPETON(NPAMAX,NPA,ENEUTR,EEMNEU,EHANEU)
+C
+C   Determine the visible energy (EM enutral energy+ visible momentum)
+C
+       EVIS = TPEVIS(PVIS, EEMNEU)
+C
+
+C   Determine if this event is a dimuon-candidate event
+C
+       l1 = Lt(1)
+       l2 = Lt(2)
+       DIMUON= .FALSE.
+       DIMUON=( TMDIMU(MASSAMB(l1),ECHATR(6,l1),HASH(8,l1),HASH(9,l1))
+     +                                     .OR.
+     +          TMDIMU(MASSAMB(l2),ECHATR(6,l2),HASH(8,l2),HASH(9,l2)) )
+
+C
+C   Determine the event topology
+C
+c       CALL TPTOPO(NPAMAX,NPA,IHEMI,IFILT,ENEUTR,NTOPOL)
+       CALL TMTOPO(NPAMAX,NPA,IHEMI,IFILT,ENEUTR,NTOPOL)
+C
+C   Update statistics on the nr of all analysed events 
+C
+      CALL STAT_TOPO(ntopol(1),ntopol(5) , NrAll)
+C
+C*** At least 1 good track per hemisphere, if not, return.
+C    -----------------------------------------------------
+C
+        IF(LT(1)*LT(2) .EQ. 0 ) RETURN
+C
+C   Count the number of events with at least 1 good track per hemi.
+C
+        NREVT(3) = NREVT(3) + 1
+C
+C
+C*** Fill event vectors
+C   -------------------
+C
+
+       IF ( ISSIM ) THEN
+            ECM = ECMSIM
+       ELSE
+            ECM = ECMLUM
+            IF (ECM.LT.10.)   ECM = ECMRQ
+       ENDIF
+       IF (ECM.LT.10)    ECM = PILINF(9)/1000
+       IF (ECM.LT.10)    WRiTE(LUNDB,1101)
+*
+       EVTINFO(1)  = NRUN
+       EVTINFO(2)  = IEVT
+       EVTINFO(3)  = NFILSQ
+       EVTINFO(4)  = DETSTAT            ! run quality information
+       EVTINFO(5)  = ECM
+       EVTINFO(6)  = THRVAL
+       EVTINFO(7)  = THRPOL(3)
+       EVTINFO(8)  = THRPOL(2)
+       EVTINFO(9)  = PVIS
+       EVTINFO(10) = PMIS
+       EVTINFO(11) = PRAD
+       EVTINFO(12) = EVIS
+       EVTINFO(13) = ERAD
+       EVTINFO(14) = ACOL
+       EVTINFO(15) = ACOP
+       EVTINFO(16) = ANGISO
+       EVTINFO(17) = EEMCHA + EEMNEU
+       EVTINFO(18) = EHACHA + EHANEU
+       EVTINFO(19) = EEMNEU
+       EVTINFO(20) = EHANEU
+       
+
+c       IEVTIN(1)  = NTOPOL(4)+NTOPOL(8)
+       IEVTIN(1)  = NPRONG
+       IEVTIN(2)  = NTOPOL(1)
+       IEVTIN(3)  = NTOPOL(5)
+       IEVTIN(4)  = NGOOD
+       REVTIN(5)  = TRACK(6,LT(1))
+       REVTIN(6)  = TRACK(6,LT(2))
+       REVTIN(7)  = DISTVT(2,LT(1))
+       REVTIN(8)  = DISTVT(2,LT(2))
+       REVTIN(9)  = DISTVT(1,LT(1))
+       REVTIN(10) = DISTVT(1,LT(2))
+       REVTIN(11) = ANGISO
+       REVTIN(12) = EVIS
+       REVTIN(14) = ERAD*2/ECM           !!!! OPGELET ERAD ASSOCIATED !!!
+       REVTIN(15) = PRAD*2/ECM
+       REVTIN(16) = ACOL
+       REVTIN(17) = PMIS
+       REVTIN(19) = COSLTM
+       REVTIN(20) = NVDTD(LT(1))
+       REVTIN(21) = NVDTD(LT(2))
+       REVTIN(22) = THRPOL(2)
+       REVTIN(23) = THRPOL(3)
+       REVTIN(24) = 0.
+       IF (DIMUON) REVTIN(24) = 1.
+
+C*** Tau selection
+C   ---------------
+C       NOT THE OFFICIAL SELECTION !!!!
+C
+        ITAU=TMTAU(NECUTS,IEVTIN,IEVTCT,REVTIN,REVTCT,IPASS,WRTUP)
+C
+C   Update statistcs 
+C
+        CALL TPCSTA(NECUTS, IPASS, NEVPAS)
+C
+C    Create own statistics 
+C
+        CALL TMSTAT(ITAU,NTOPOL,NHM,PTAU)
+C
+C
+C*** Fill histograms and ntuples for this event
+C  --------------------------------------------
+C
+**** THE TAUPLUS NTUPLE :
+
+
+c          IF (WRTUP)  THEN
+c            CALL TPFIGL( EVTINFO )
+c            CALL TPFIMC(PTAU,NHM,PMCTRK)
+c            CALL TPFITO(NTOPOL)
+c            CALL TPFICH(NPA,LT,TRACK,IHEMI,DISTVT,EMSH,HASH,
+c      &       ECONE,NODA,IFILT)
+c            CALL TPFINE(NPA,IHEMI,IFILT,EMSH,HASH) 
+c            CALL HFNT(40)
+c           ENDIF
+
+C    -> my own ntuples :
+C
+**** FILL THE VUB NTUPLE
++SELF, IF=VUBBNTUP.
+          IF(ITAU.EQ.11) THEN
+             CALL TPFIGL(  EVTINFO )
+             IF( ISSIM ) CALL TMFIMC(PTAU,NHM,PMCTRK)
+             CALL FILVUB(TRACK,TRERR,ESTAND,DISTVT,IFILT,IHEMI,ECHATR,
+     &        ECONE,ENEUTR,EMSH,HASH,NVDTD,NVDHIT,NRREAS,RAVDTR,NODA,
+     &        DEDX,MASSAMB,THRPOL,LT,NTOPOL,NHM,corrfact,ELEC)
+             CALL HFNT(41)
+          ENDIF
++SELF.
+
++SELF, IF=TESTNTUP.
+          IF (IPASS(4).EQ.1) THEN    !if a barrel event
+             CALL TPFIGL(  EVTINFO )
+             CALL TMFILC( ITAU, NECUTS, IPASS)
+             IF( ISSIM ) CALL TMFIMC(PTAU,NHM,PMCTRK)
+             CALL FILVUB(TRACK,TRERR,ESTAND,DISTVT,IFILT,IHEMI,ECHATR,
+     &        ECONE,ENEUTR,EMSH,HASH,NVDTD,NVDHIT,NRREAS,RAVDTR,NODA,
+     &        DEDX,MASSAMB,THRPOL,LT,NTOPOL,NHM,corrfact,ELEC)
+             CALL HFNT(41)
+          ENDIF   
++SELF.
+
+
++SELF, IF=HISTO.
+**** THE HISTOGRAMS :
+
+      CALL HFILL(1,FLOAT(IEVTIN(1)) ,0.,1.)
+      CALL HFILL(2,FLOAT(NGOOD )    ,0.,1.)
+      CALL HFILL(3,COSLTM           ,0.,1.)
+      CALL HFILL(4,REVTIN(7)        ,0.,1.)
+      CALL HFILL(4,REVTIN(8)        ,0.,1.)
+      CALL HFILL(5,REVTIN(9)        ,0.,1.)
+      CALL HFILL(5,REVTIN(10)       ,0.,1.)
+      CALL HFILL(6,ANGISO*RADTOD    ,0.,1.)
+      CALL HFILL(7,EVIS             ,0.,1.)
+      CALL HFILL(8,ERAD             ,0.,1.)
+      CALL HFILL(9,PRAD             ,0.,1.)
+      CALL HFILL(10,ACOL*RADTOD     ,0.,1.)
+      CALL HFILL(11,PMIS            ,0.,1.)
+       ZDIFF =  REVTIN(7) - REVTIN(8) 
+      CALL HFILL(12,ZDIFF           ,0.,1.)
+      CALL HFILL(100,ECONE(1,lt(1))  ,ECONE(1,lt(2))   ,1.)
+      CALL HFILL(101,TRACK(4,lt(1))  ,TRACK(4,lt(2))   ,1.)
+      CALL HFILL(105,FLOAT(ntopol(1)),FLOAT(ntopol(5)) ,1.)
+      CALL HFILL(106,FLOAT(ntopol(4)),FLOAT(ntopol(8)) ,1.)
++SELF.
+*
+
+      RETURN
+ 1101 FORMAT('**TPRUN**: ECM IS NOT  CORRECT !'/
+     &  ' SELECTION ON ERAD AND PRAD WILL BE WRONG !')
+      END
+C
+C
++DECK,TMSELPA.
+************************************************************
+* TMSELPA                                                  *
+*                                                          *
+* Purpose: Select a coherent set of PA's to analyse        *
+*          Order PA's by momentum                          *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMSELPA(PAPHOT)
+C
+C    Global declarations
+C
++CDE,UXCOM.
++CDE,TPCDE.
+C
+C    Functions
+C
+      INTEGER TPTYPV
+C   
+C    Local declarations
+C
+      INTEGER PASKIP(NPAMAX,-2:28)
+      INTEGER PAPHOT(NPAMAX,-2:28)
+      LOGICAL ELEPH  
+C
+C    Executables
+C
+         CALL VZERO(PASKIP,NPAMAX*31)
+         CALL VZERO(PAPHOT,NPAMAX*31)
+
+         NSKIP = 0
+         ELEPH = .TRUE.
+
++SELF, IF=-ELEPHANT.
+C
+C    ***** FOR NORMAL DST, ELEPHANT HAS NOT BEEN CALLED  ******
+C
+       IF (LTPPID(1).EQ.0) THEN
+C
+C   Discard vertices with links to incoming PA's
+C               
+         NSKIP2 = 0   
+         DO 5 IPA=1,NPA
+           IPAPV = LTPDQ(IPA,-2)
+           IF (LQ(IPAPV-2) .NE. 0) THEN
+              CALL TMLEAV(IPA)
+              NSKIP2 = NSKIP2 + 1
+           ENDIF   
+   5    CONTINUE      
+        GOTO 40   
++SELF.
+
+C     ***** FOR (LONGDST) AND (NORMAL DST + CALL ELEPHANT) ******
+C
+CCC   Select the particle set advised by the ELEPHANT people
+      IF (ELEPH) THEN
+C
+C --->  Select the PA's created by ELEPHANT:
+C
+           DO 10 IPA=1,NPA
+              IPAPV = LTPDQ(IPA,-2)
+              ITYPV = TPTYPV(IPAPV)                      ! type of the vertex
+              IF ((ITYPV.NE.0).AND.(ITYPV.NE.1))   THEN  ! forget 2ed.vertex.
+                 NSKIP = NSKIP + 1
+                 IPAPA = LTPDQ(IPA,-1)
+                 CALL PXGECO( IPAPA, ICODE )
+C                 keep the PA's of gammas from radiation seperat 
+                 IF (Icode.EQ.-39.OR.Icode.EQ.-49) THEN  ! 
+                   DO 5, i=-2,28
+                    PAPHOT(NSKIP,i)= LTPDQ(IPA,i)
+   5               CONTINUE  
+                 ENDIF
+                 CALL TMLEAV(IPA)
+             ENDIF
+  10       CONTINUE
+C                          
+CCC   Select the orriginal particle set.
+      ELSE 
+C
+C --->  Skip the PA's created by ELEPH and keep only the orriginal once
+C
+           DO 20, IPA=1,NPA
+              IPAPA = LTPDQ(IPA,-1)
+              IPAPV = LTPDQ(IPA,-2)
+              ITYPV = TPTYPV(IPAPV)                     ! type of the vertex
+              IDTAN = IQ( IPAPA+1)
+              IF ((IDTAN .LT. 0))     THEN
+                 NSKIP = NSKIP + 1
+                 DO 15, i=-2,28
+                     PASKIP(NSKIP,i)= LTPDQ(IPA,i) 
+  15             CONTINUE        
+                 CALL TMLEAV(IPA)
+              ENDIF               
+C
+  20       CONTINUE
+C
+C --->   Discard vertices with links to incoming PA's
+C        execept if they are created by ELEPH
+C
+           NSKIP2 = 0
+           DO 30 IPA=1,NPA
+             IPAPV = LTPDQ(IPA,-2)
+             ILINK = LQ(IPAPV-2)
+             IF ((ILINK.NE.0).AND.(IPAPV.NE.0)) THEN
+                ISTOP = 1
+                DO 25, i=1,NSKIP
+                  IF( ILINK.EQ.PASKIP(i,-1))  ISTOP = 0
+   25           CONTINUE         
+                IF (ISTOP.EQ.1)  THEN
+                  CALL TMLEAV(IPA)
+                  NSKIP2 = NSKIP2 + 1
+                ENDIF   
+             ENDIF                   
+   30      CONTINUE     
+C
+      ENDIF 
+
+   40 Continue
+
+C
+C    order the links to the PA's by momentum
+C
+      CALL TPORPA
+C
+C    Count number of Pa's left 
+C
+      NPA = NPA - NSKIP - NSKIP2
+C
+      RETURN
+      END
+
++DECK, TMLEAV.=========================================================
+         SUBROUTINE TMLEAV(IPA)
+************************************************************************
+* TMLEAV
+*      Sets all the pionters to the different modules of a PA
+*       to zero.
+************************************************************************
++CDE, TPCDE .   ! pionters to the modules on the DST
+
+        DO 10, i=-2,28
+            LTPDQ(IPA,i) = 0
+ 10     CONTINUE        
+        LTPSTA(iPA) = 0
+        LTPCCA(iPA) = 0
+        LTPEMC(iPA) = 0
+        LTPHCA(iPA) = 0
+        LTPMU(iPA) = 0
+        LTPEL(iPA) = 0
+        LTPMRI(iPA) = 0
+        LTPMTP(iPA) = 0
+        LTPTRA(iPA) = 0
+        LTPTOF(iPA) = 0
+        LTPTDH(iPA) = 0
+        LTPTEI(iPA) = 0
+        LTPTET(iPA) = 0
+        LTPTEO(iPA) = 0
+        LTPTEA(iPA) = 0
+        LTPTEB(iPA) = 0
+        LTPTDI(iPA) = 0
+        LTPSAT(iPA) = 0
+        LTPENC(iPA) = 0
+        LTPHNC(iPA) = 0
+        LTPMID(iPA) = 0
+        LTPEID(iPA) = 0
+        LTPHID(iPA) = 0
+        LTPMFX(iPA) = 0
+        LTPETR(iPA) = 0
+
+        RETURN 
+        END
+
++DECK, TMTRER.
+**********************************************************************
+* TMTRER.
+*   Calculates the error on the polar coordinates of the momentum
+*     for charged tracks
+**********************************************************************
+          SUBROUTINE TMTRER(IUPJDB,LTPSTA,LTPT,TR,errortr)
+
++CDE,UXCOM.
+
+**** LOCAL VARIABLES ****
+*   ###################
+      REAL  tr(13) , errortr(4)
+c      REAL  Cov(3,3), Jac(3,3),Z(3,3),Res(3,3)
+c      EQUIVALENCE (C11,Cov(1,1)),(C12,Cov(1,2)),(C21,Cov(2,1))
+c      EQUIVALENCE (J11,Jac(1,1)),(J12,Jac(1,2)),(J21,Jac(2,1))
+c      EQUIVALENCE (Z11,Z(1,1)),(Z12,Z(1,2)),(Z21,Z(2,1))
+c      EQUIVALENCE (R11,RES(1,1)),(R12,RES(1,2)),(R21,RES(2,1))
+
+      REAL PPAR(3), PCOV(6),PXYZR(3),d4P(10)
+      REAL WEIGHT(15), ERROR(15)
+      
+
+**** EXECUTABLES ****
+*   #############
+      CALL VZERO(errortr,4)
+
+* skip neutral tracks
+      IF (tr(9) .LT. 0.5)       RETURN
+
+* x,y,z coordinate of the momentum
+      px = tr(1)
+      py = tr(2)
+      pz = tr(3)
+      p  = tr(4)
+
+      IF (p.EQ.0)               RETURN
+*
+C*************** FOR LONGDST :
+      IF (LTPPID.EQ.0) THEN
+*   If the TRAC extra module (nr 8) is there ... :
+*
+       IF ( LTPT .EQ. 0 )  RETURN
+
+       PPAR(1) = Q(LTPT+3)                            
+       PPAR(2) = Q(LTPT+4)                            
+       PPAR(3) = Q(LTPT+5)
+       
+       WEIGHT(1)=Q(LTPT+6)
+       WEIGHT(2)=Q(LTPT+7)
+       WEIGHT(3)=Q(LTPT+8)
+       WEIGHT(4)=Q(LTPT+9)
+       WEIGHT(5)=Q(LTPT+10)
+       WEIGHT(6)=Q(LTPT+11)
+       WEIGHT(7)=Q(LTPT+12)
+       WEIGHT(8)=Q(LTPT+13)
+       WEIGHT(9)=Q(LTPT+14)
+       WEIGHT(10)=Q(LTPT+15)
+       WEIGHT(11)=Q(LTPT+16)
+       WEIGHT(12)=Q(LTPT+17)
+       WEIGHT(13)=Q(LTPT+18)
+       WEIGHT(14)=Q(LTPT+19)
+       WEIGHT(15)=Q(LTPT+20)
+*
+* the inverse of the WEIGHT matrix is the error matrix :
+*
+       CALL BFKMI5(WEIGHT,ERROR,IERR)
+
+       PCOV(1) = ERROR( 6)
+       PCOV(2) = ERROR( 9) 
+       PCOV(3) = ERROR(10)
+       PCOV(4) = ERROR(13)
+       PCOV(5) = ERROR(14)
+       PCOV(6) = ERROR(15)
+       CALL VDPE2E(PPAR,0.1,PCOV,PXYZR,PR,ER,D4P,DP)
+
+*      covariantie matrix op px,py,pz
+       dxx = d4p(1)   
+       dxy = d4p(2)   
+       dyy = d4p(3)   
+       dxz = d4p(4)   
+       dyz = d4p(5)   
+       dzz = d4p(6) 
+c
+C********* FOR NORMAL DST          
+      ELSE   
+*      covariantie matrix op px,py,pz
+       dxx = Q(LTPSTA+12)
+       dxy = Q(LTPSTA+13)
+       dyy = Q(LTPSTA+14)
+       dxz = Q(LTPSTA+15)
+       dyz = Q(LTPSTA+16)
+       dzz = Q(LTPSTA+17)
+      ENDIF
+      
+      p2   = p ** 2                    ! p^2
+      x2y2 = px**2 + py**2             ! px^2 + py^2
+      Sx2y2= SQRT(x2y2)                ! SQRT( px^2 + py^2 )
+      x2y22= x2y2**2                   ! (px^2+py^2)^2
+
+      dpdx = px/p                      ! partieel afgeleide van p naar x
+      dpdy = py/p
+      dpdz = pz/p
+      dfdx = -py/x2y2                  ! partieel afgeleide van phi naar x
+      dfdy =  px/x2y2
+      dfdz = 0.
+      dtdx = px*pz/(Sx2y2*p2)          ! partieel afgeleide van theta naar x
+      dtdy = py*pz/(Sx2y2*p2)
+      dtdz = - Sx2y2/p2
+
+* sigma^2 op p, phi en theta
+      dpp = dxx*(dpdx**2)+dyy*(dpdy**2)+dzz*(dpdz**2)+
+     &  dxy*(2*dpdx*dpdy)+dxz*(2*dpdx*dpdz)+dyz*(2*dpdy*dpdz)
+      dff = dxx*(dfdx**2)+dyy*(dfdy**2)+dzz*(dfdz**2)+
+     &  dxy*(2*dfdx*dfdy)+dxz*(2*dfdx*dfdz)+dyz*(2*dfdy*dfdz)
+      dtt = dxx*(dtdx**2)+dyy*(dtdy**2)+dzz*(dtdz**2)+
+     &  dxy*(2*dtdx*dtdy)+dxz*(2*dtdx*dtdz)+dyz*(2*dtdy*dtdz)
+  
+c      Cov(1,1) = dxx
+c      Cov(1,2) = dxy
+c      Cov(2,1) = dxy
+c      Cov(1,3) = dxz
+c      Cov(3,1) = dxz
+c      Cov(2,2) = dyy
+c      Cov(2,3) = dyz
+c      Cov(3,2) = dyz
+c      Cov(3,3) = dzz
+
+c      Jac(1,1) = dpdx
+c      Jac(1,2) = dpdy
+c      Jac(1,3) = dpdz
+c      Jac(2,1) = dfdx
+c      Jac(2,2) = dfdy
+c      Jac(2,3) = dfdz
+c      Jac(3,1) = dtdx
+c      Jac(3,2) = dtdy
+c      Jac(3,3) = dtdz
+
+* product J*COV  = Z
+c      CALL RMMLT(3,3,3,J11  ,J12  ,J21  ,
+c     &                 C11  ,C12  ,C21,
+c     &                 z11  ,z12  ,z21  ,DUM)
+c
+
+
+* product (j*COV) * J~
+c      CALL RMMLT(3,3,3,Z11  ,Z12  ,Z21 ,
+c     &                 J11  ,J21  ,J12 ,
+c     &                 R11  ,R12  ,R21 ,DUM)
+
+      IF (dpp.LT.0.)  THEN
+        dpp = dxx*(dpdx**2)+dyy*(dpdy**2)+dzz*(dpdz**2)
+      ENDIF
+      IF (dff.LT.0.) THEN
+        dff = dxx*(dfdx**2)+dyy*(dfdy**2)+dzz*(dfdz**2)
+      ENDIF
+      IF (dtt.LT.0.) THEN
+        det = dxx*dyy*dzz-dxx*dyz*dyz-dxy*dxy*dzz+dxy*dxz*dyz+
+     &      dzx*dxy*dyz-dzx*dxz*dyy
+        dtt = dxx*(dtdx**2)+dyy*(dtdy**2)+dzz*(dtdz**2)
+      ENDIF
+     
+      errortr(1) = SQRT( dpp )   ! error on p
+      errortr(2) = SQRT( dff )   ! error on phy
+      errortr(3) = SQRT( dtt )   ! error on theta
+      errortr(4) = Q(LTPSTA+18)      ! error on E
+
+      RETURN
+      END
+*
+*
++DECK, MUIDENT.=========================================================
+         SUBROUTINE MUIDENT
+************************************************************************
+*MUIDENT
+*   function : cals MUCAL2: the muon identification package.
+*   Variables: nmuonS/T/L/V = # of tagged Standard/Ticht/Loos/Very-loos
+*                 muons
+*              lmupS/T/L/V = array of the iPa pointers to the tagged muons.
+************************************************************************
++CDE, MCLCDE.    ! a muflag common with the results of the identification.
+
+      PARAMETER (NMUMAX = 20)
+      INTEGER lmupS(NMUMAX),lmupT(NMUMAX),lmupL(NMUMAX), lmupV(NMUMAX)
+
+
+      CALL VZERO(lmupL,NMUMAX)
+      CALL VZERO(lmupS,NMUMAX)
+      CALL VZERO(lmupT,NMUMAX)
+      CALL VZERO(lmupV,NMUMAX)
+
+
+      CALL MUCAL2(nmuonS,lmupS,nmuonT,lmupT,nmuonL,lmupL,nmuonV,lmupV)
+
+
+      RETURN
+      END
+C                        
+C
++DECK,TM_MUC.
+************************************************************************
+*TM_MUC
+*    function : gets muon-information from the muon bloklet on the DST
+*    arguments: mupar(1) = bitetd word : bit 1 = verry loos tag
+*                                        bit 2 = loos tag
+*                                        bit 3 = standard tag
+*                                        bit 4 = tight tag 
+*               mupar(2) = detector label (14=MUB,30=MUF)
+*               mupar(3) = # of ass layers
+*               mupar(4) = global ch2
+*               mupar(5) = hit patern.
+*    Called by: physics
+************************************************************************
+         SUBROUTINE TM_MUC(iPA , mupar )
+C
+C   Global declarations
+C
+
++CDE, UXCEVT.   ! Runnr, Event ,...
++CDE, TPCDE.    ! the LPA nr from the DST of the track
++CDE, MCLCDE.   ! MUFALG information on the muons
+
+**** LOCAL VARIABLES ****
+*   ###################
+      REAL    mupar(5)
+
+**** EXECUTABLES ****
+*   #############
+*
+      IAV = 0
+      ITV = 0
+      IAS = 0
+      ITS = 0
+      IAL = 0
+      ITL = 0
+      IAT = 0
+      ITT = 0
+      CALL VZERO( mupar,5)
+  
+* Find whether track has a module under certain refit conditions,
+* and whether track was then flagged.
+*
+* VL.
+      DO 100 I=1,NMUTV
+        IF (LTPDQ(iPA,-1) .EQ. MUTV(0,I)) THEN
+          IAV = I
+          IF (MUTV(10,IAV) .EQ. 1) THEN
+            ITV = 1
+          ELSE
+            WRITE(6,*) 'MPRMUTAG: Error! VL refit without tag!'
+            GOTO 999
+          ENDIF
+        ENDIF
+  100 CONTINUE
+
+      IF (ITV .EQ. 0) THEN         ! no muon taged
+        ICR = 1
+        GOTO 999
+      ENDIF
+*
+* S & L.
+      DO 200 I=1,NMUTS
+        IF (LTPDQ(iPA,-1) .EQ. MUTS(0,I)) THEN
+          IAS = I
+          IAL = I
+          IF (MUTS(10,IAS) .EQ. 1) THEN
+            ITS = 1
+          ENDIF
+          IF (MUTL(10,IAL) .EQ. 1) THEN
+            ITL = 1
+          ENDIF
+        ENDIF
+  200 CONTINUE
+      IF ((ITS .EQ. 1) .AND. (ITL .EQ. 0)) THEN
+        WRITE(6,*) 'MPRMUTAG: Error! S tag without L tag!'
+        GOTO 999
+      ENDIF
+ 
+* T.
+      DO 300 I=1,NMUTT
+        IF (LTPDQ(iPA,-1) .EQ. MUTT(0,I)) THEN
+          IAT = I
+          IF (MUTT(10,IAT) .EQ. 1) THEN
+            ITT = 1
+          ENDIF
+        ENDIF
+  300 CONTINUE
+
+* Fill mupar array
+      mupar(1) = FLOAT(ITV+2*ITL+4*ITS+8*ITT)
+      mupar(2)  =FLOAT( MUTV(1,IAV))  ! detector label
+      mupar(3)  =FLOAT( MUTV(2,IAV))  ! # of associated layers
+      mupar(4)  = RMUTV(4,IAV)        ! global ch2
+      IF (MUTV(1,IAV) .EQ. 14) THEN
+        IADD = 128
+      ELSE
+        IADD = 0
+      ENDIF
+      IF ( NRUN.LT.0 ) THEN              ! MC
+            IPAT4 = MUTV(9,IAV)+IADD  ! hit pattern with ineffisiancies.
+            IPAT5 = MUTV(3,IAV)+IADD  !  "   "    without  "
+            IPAT  = IAND(IPAT4,IPAT5) ! AND of the last two
+         mupar(5) = FLOAT(IPAT)
+      ELSE                            ! DATA
+         mupar(5) = FLOAT(MUTV(3,IAV)+IADD ) ! hit pattern without ineff.
+      ENDIF
+
+ 999  RETURN
+      END
+*
++DECK, TMDIMU.
+***********************************************************************
+* TMDIMU                                                              *
+*                                                                     *
+*   Purpose : TMDIMU = .TRUE. if this track is found the be a         *
+*          a muon-candidate                                           *
+*                                                                     *
+*   massamb = the mass ambiguety code of teh track                    *
+*   EEM     = electromagnetic energy associated to the track          *
+*   Eha3    = hadronic energy deposited in the 3ed layer of the HCAL  *
+*   Eha4    = hadronic energy deposited in the 4ed layer of the HCAL  *
+*                                                                     *
+***********************************************************************
+*
+       FUNCTION TMDIMU(massamb, Eem, Eha3,Eha4)
+
+       LOGICAL TMDIMU, BTEST, TEST
+
+C
+C      Executables
+C
+       TMDIMU = .FALSE.
+
+       TEST = BTEST(massamb,0)
+       IF (Eem.LT.1.)   TMDIMU = .TRUE.
+       IF (Eha3.GT.0)   TMDIMU = .TRUE.
+       IF (Eha4.GT.0)   TMDIMU = .TRUE.
+       IF (TEST)        TMDIMU = .TRUE.
+
+       RETURN
+       END
+
++DECK,TMVD.
+**************************************************************************
+*                                                                        *
+* TM_VD                                                                  *
+*  function : get MVTX information                                       *
+*  arguments: NVDHIT     = total nr ov VD hits in the event              *
+*             NRVDTK(ipa)= nr of vd hist associated to that track        *
+*             NrReAs     = nr of assocaiations foint in the unass. hits  *
+*             RAVdTr(1:4,nr) = x,y,z,R of first point, phi of track,hemi *
+*                        of the foind association nr                     *
+*                        nr = 1 , NrReAs                                 *
+*  REMARK: ONLY WORKING FROM DST-VERSION 285 ONWARDS !!!!                *
+*                                                                        *
+**************************************************************************
+C
+C
+        SUBROUTINE TM_VD(NVDHIT, NRVDTK,NrReAs ,RAVdTr, IDSTVS)
+C
+C
++CDE, UXCEVT.   ! run nr, event nr ,...
++CDE, UXCOM.    ! Arrays Q, IQ, LQ
++CDE, TPCDE .   ! pionters to the modules on the DST
++CDE, UXLINK.   ! LDTOP , ...
++CDE, TPIOUN.
+
+**** LOCAL VARIABLES ****
+*   ###################
+*
+       INTEGER    NRVDTK(NPAMAX)
+       INTEGER    ModHit(200),NrAs, InVdAs(200)
+       REAL       VdHit(4,200) , ParAss(8) ,RAVdTr(5,40)
+
+       PARAMETER ( PI = 3.1415926535898 )
+
+**** EXECUTABLES ****
+*   #############
+
+      CALL VZERO(NRVDTK , NPAMAX)
+      CALL VZERO(RAVdTr ,  5*40 )
+
+      IF (IDSTVS .LT.285.) GOTO 900
+
+*-- Read VD information form the DST
+      LTDVD = LQ(LDTOP-9)
+      IF (LTDVD .EQ. 0 ) GOTO 900     ! no vd information
+      NWPH = MOD( IQ(LTDVD+1) , 1000 )! nr of words per hit.
+      Nvdhit = (IQ(LTDVD-1)-1)/NWPH   ! nr of vd hits
+      nrUna = 0
+      LHIT = LTDVD + 1
+      DO 20  l=1,Nvdhit               ! loop over vd hits
+         lPA = LQ(LTDVD-l)            ! the PA to which the hit is ass.
+         IF (lPA .EQ. 0)  THEN        ! unassociated vd hit.
+           nrUna = nrUna + 1
+           IF (nrUna.GE.200)  GOTO 20
+           ModHit(nrUna)  = MOD( IQ(LHIT+1), 1000) ! modul nr with sign of z
+           PhiUn          = Q(LHIT+3)/Q(LHIT+2)
+           VdHit(1,nrUna) = Q(LHIT+2)*COS(PhiUn)  ! x coord. of TE
+           VdHit(2,nrUna) = Q(LHIT+2)*SIN(PhiUn)  ! y coord. of TE
+           VdHit(3,nrUna) = Q(LHIT+2)             ! R of TE
+           VdHit(4,nrUna) = PhiUn                 ! phy of TE
+         ELSE             ! search to which IPA the vd hit is associated
+           IPA = 1
+  10       CONTINUE
+             IF ( LTPDQ(iPA,-1) .EQ. FLOAT( lPA )) THEN
+                NRVDTK(iPA)=NRVDTK(iPA)+1
+                iPA=150
+             ENDIF
+             IPA = IPA + 1
+           IF (iPA.LE.NPA) GO TO 10
+         ENDIF
+         LHIT = LHIT + NWPH
+  20   CONTINUE
+
+*-- Try possible associations of the unassociated VD hits into tracks
+       NrReAs = 0
+       IF (nrUna . LT. 3)  GOTO 900
+  30   CONTINUE
+         CALL ROADF(nrUna,ModHit,VdHit,NrAs,InVdAs,ParAss)
+         IF (NrAs .EQ. 0)  GOTO 900
+         NrReAs = NrReAs + 1
+         IF (NrReAs.GT.40) GOTO 900
+         CALL UCOPY ( ParAss(1) , RAVdTr(1,NrReAs) , 3)
+        a = ATAN( ParAss(7))
+        acor = 0.
+        x2x1 = ParAss(4)-ParAss(1)
+        y2y1 = ParAss(5)-ParAss(2)
+        IF (x2x1 . GT. 0. ) THEN
+         IF (y2y1.GT.0) acor = a
+         IF (y2y1.LT.0) acor = a + 2*PI
+         IF (y2y1.EQ.0) acor = 0
+        ELSEIF (x2x1.LT.0.) THEN
+         IF (y2y1.NE.0) acor = a + PI
+         IF (y2y1.EQ.0) acor = PI
+        ELSEIF (x2x1.EQ.0.) THEN
+         IF (y2y1.GT.0) acor = PI/2
+         IF (y2y1.LT.0) acor = 3*PI/2
+        ENDIF
+        RAVdTr(4,NrReAs) = acor
+
+         l = 1
+         DO 50  i=1,nrUna
+            IF (IUCOMP(i,InVdAs,NrAs) .NE. 0) THEN
+              DO 40, k = l , (nrUna-i+l-1)
+                ModHit(k)  = ModHit(k+1)
+                VdHit(1,k) = VdHit(1,k+1)
+                VdHit(2,k) = VdHit(2,k+1)
+                VdHit(3,k) = VdHit(3,k+1)
+                VdHit(4,k) = VdHit(4,k+1)
+  40          CONTINUE
+            ELSE
+              l = l+1
+            ENDIF
+  50     CONTINUE
+         nrUna = nrUna - NrAs
+       IF( nrUna .GE. 3)  GOTO 30
+
+ 900  RETURN
+      END
+*
++DECK, ROADF. =========================================================
+      SUBROUTINE ROADF(NVD, IVDHIT, VDHIT, NAS, IVDAS, UVDPAR)
+**************************************************************************
+*ROADF.
+*     Test a possible association of VD hits into tracks
+*     in the radial plane
+*     Last modification: 94/03/23  D. Bertrand
+*
+*     Input   NVD            # of VD hits
+*             IVDHIT(NVD)    module # with sign of z
+*             VDHIT(4,NVD)   1 x
+*                            2 y
+*                            3 R
+*                            4 Phi
+*                         
+*     Output  NAS            number of associated VD hits
+*             IVDAS(NAS)     associated indices
+*             UVDPAR(8)      parameters of the trajectory
+*                            1   :  x start point
+*                            2   :  y start point
+*                            3   :  R start point
+*                            4   :  x end   point
+*                            5   :  y end   point
+*                            6   :  R end   point
+*                            7   :  angular coefficient
+*                            8   :  offset
+**************************************************************************
++CDE, UXCEVT.   ! Runnr, Event ,...                  ! SDB
+ 
+c      IMPLICIT     NONE
+*
+      REAL bs(3) , dxyzb(3)                          ! SDB
+*
+      REAL         PI
+      PARAMETER   (PI = 3.1415926535898)
+      REAL         CONAP
+      PARAMETER   (CONAP = 0.1 * PI / 180.0)
+      REAL         RMSLIM        , RMSLM2
+      PARAMETER   (RMSLIM = 0.003, RMSLM2 = RMSLIM**2)
+      REAL         DISMIS      , DISTM2
+      PARAMETER   (DISMIS = 1.5, DISTM2 = DISMIS**2)
+*
+      INTEGER      NVD, IVDHIT(NVD), NAS, IVDAS(200)
+      REAL         VDHIT(4,NVD), UVDPAR(8)
+      INTEGER      I, IR, J, IA, NASST, ISTRT, IEND, INDAST(200),
+     ,             IDIF
+      LOGICAL      VERT, PERP
+      REAL         XINT, YINT, DISMIN, CH2, CH2MIN, 
+     ,             PHI, RHO, A2, AB, RMIN, RMAX
+      REAL*8       SX, SY, SX2, SY2, SXY, AINT, BINT, TASS, XM,
+     ,             YM, AINV, DX, DY
+c      REAL*8       DINT, BINV
+c      REAL         PHINT
+      INTEGER      IUCOMP
+      REAL         PROXIM
+*
+      NAS    = 0
+      CH2MIN = 1.0E 32
+      IF (NVD .GE. 3)                                   THEN
+        DO  30  I = 1, NVD-2
+          IF (NVD-I+1 .GT. NAS)                         THEN
+            DO  20  IR = I+1, NVD
+              IF (IVDHIT(IR) .EQ. IVDHIT(I) .OR.
+     O   ISIGN (1, IVDHIT(IR)) .NE. ISIGN (1, IVDHIT(I)))  GO TO 20
+              SX    = VDHIT(1,I)            + VDHIT(1,IR)
+              SY    = VDHIT(2,I)            + VDHIT(2,IR)
+              DX    = ABS (VDHIT(1,I)       - VDHIT(1,IR))
+              DY    = ABS (VDHIT(2,I)       - VDHIT(2,IR))
+              IF (DX .LT. 0.001 .AND. DY .LT. 0.001)   GO TO 20
+              SX2   = VDHIT(1,I)**2         + VDHIT(1,IR)**2
+              SY2   = VDHIT(2,I)**2         + VDHIT(2,IR)**2
+              SXY   = VDHIT(1,I)*VDHIT(2,I) + VDHIT(1,IR)*VDHIT(2,IR)
+              IF (VDHIT(3,I) .LT. VDHIT(3,IR))          THEN
+                RMIN  = VDHIT(3,I)
+                RMAX  = VDHIT(3,IR)
+                ISTRT = I
+                IEND  = IR
+              ELSE
+                RMIN  = VDHIT(3,IR)
+                RMAX  = VDHIT(3,I)
+                ISTRT = IR
+                IEND  = I
+              END IF
+              INDAST(1) = I
+              INDAST(2) = IR
+              NASST = 2
+              TASS  = NASST
+              XM    = SX / TASS
+              YM    = SY / TASS
+              VERT  = DY .GT. DX
+              IF ( VERT )                              THEN
+                AINT  = (SXY - YM*SX) / (SY2 - TASS*YM**2)
+                BINT  = XM - AINT*YM
+              ELSE
+                AINT  = (SXY - XM*SY) / (SX2 - TASS*XM**2)
+                BINT  = YM - AINT*XM
+              END IF
+              PERP  = AINT .EQ. 0.0
+              IF ( .NOT. PERP)            AINV  = -1.0/AINT
+              DO  10  J = I+1, NVD
+                IF (J .NE. IR)                         THEN
+                  DO 5 IA = 1, NASST
+                    IF (IVDHIT(J) .EQ. IVDHIT(INDAST(IA)) .OR.
+     O                  ISIGN (1, IVDHIT(J)) .NE. 
+     N                  ISIGN (1, IVDHIT(INDAST(IA))))  GO TO 10
+5                 CONTINUE
+                  IF ( VERT )                          THEN
+                    IF ( PERP )                        THEN
+                      RHO = VDHIT(3,J)**2 - BINT**2
+                      IF (RHO .LT. 0.0)                GO TO 10
+                      YINT = SQRT (RHO)
+                      XINT = BINT
+                      IF (VDHIT(2,J) .LT. 0.0)         YINT = -YINT
+                    ELSE
+                      AB  = AINT * BINT
+                      A2  = 1.0 + AINT**2
+                      RHO = AB**2 - A2 * (BINT**2-VDHIT(3,J)**2)
+                      IF (RHO .LT. 0.0)                GO TO 10
+                      RHO  = SQRT (RHO)
+                      YINT = (RHO - AB) / A2
+                      IF (SIGN (1.0, YINT) .NE.
+     N                    SIGN (1.0, VDHIT(2,J)))      THEN
+                        YINT = -(RHO + AB) / A2
+                        XINT = AINT*YINT + BINT
+                      ELSE
+                        XINT = AINT*YINT + BINT
+                        IF (SIGN (1.0, XINT) .NE.
+     N                      SIGN (1.0, VDHIT(1,J)))    THEN
+                          YINT = -(RHO + AB) / A2
+                          XINT = AINT*YINT + BINT
+                        END IF
+                      END IF
+                    END IF
+                    PHI = ATAN2 (YINT, XINT)
+                    IF (PHI .LT. 0.0) PHI = PHI + 2.0*PI
+                    DISMIN = ABS (VDHIT(4,J) - PROXIM (PHI, VDHIT(4,J)))
+                    IF (DISMIN .LE. CONAP)               THEN
+                      NASST = NASST + 1
+                      TASS  = NASST
+                      INDAST(NASST) = J
+                      IF (VDHIT(3,J) .LT. RMIN)          THEN
+                        RMIN  = VDHIT(3,J)
+                        ISTRT = J
+                      ELSE IF (VDHIT(3,J) .GT. RMAX)     THEN
+                        RMAX  = VDHIT(3,J)
+                        IEND  = J
+                      END IF
+                      SX    = SX  + VDHIT(1,J)
+                      SY    = SY  + VDHIT(2,J)
+                      SY2   = SY2 + VDHIT(2,J)**2
+                      SXY   = SXY + VDHIT(1,J)*VDHIT(2,J)
+                      XM    = SX / TASS
+                      YM    = SY / TASS
+                      AINT  = (SXY - YM*SX)/(SY2 - TASS*YM**2)
+                      BINT  = XM - AINT*YM
+                      PERP  = AINT .EQ. 0.0
+                      IF ( .NOT. PERP)       AINV  = -1.0/AINT
+                    END IF
+                  ELSE
+                    IF ( PERP )                        THEN
+                      RHO = VDHIT(3,J)**2 - BINT**2
+                      IF (RHO .LT. 0.0)                GO TO 10
+                      XINT = SQRT (RHO)
+                      YINT = BINT
+                      IF (VDHIT(1,J) .LT. 0.0)         XINT = -XINT
+                    ELSE
+                      AB  = AINT * BINT
+                      A2  = 1.0 + AINT**2
+                      RHO = AB**2 - A2 * (BINT**2-VDHIT(3,J)**2)
+                      IF (RHO .LT. 0.0)                GO TO 10
+                      RHO  = SQRT (RHO)
+                      XINT = (RHO - AB) / A2
+                      IF (SIGN (1.0, XINT) .NE.
+     N                    SIGN (1.0, VDHIT(1,J)))      THEN
+                        XINT = -(RHO + AB) / A2
+                        YINT = AINT*XINT + BINT
+                      ELSE
+                        YINT = AINT*XINT + BINT
+                        IF (SIGN (1.0, YINT) .NE.
+     N                      SIGN (1.0, VDHIT(2,J)))    THEN
+                          XINT = -(RHO + AB) / A2
+                          YINT = AINT*XINT + BINT
+                        END IF
+                      END IF
+                    END IF
+                    PHI = ATAN2 (YINT, XINT)
+                    IF (PHI .LT. 0.0) PHI = PHI + 2.0*PI
+                    DISMIN = ABS (VDHIT(4,J) - PROXIM (PHI, VDHIT(4,J)))
+                    IF (DISMIN .LE. CONAP)               THEN
+                      NASST = NASST + 1
+                      TASS  = NASST
+                      INDAST(NASST) = J
+                      IF (VDHIT(3,J) .LT. RMIN)          THEN
+                        RMIN  = VDHIT(3,J)
+                        ISTRT = J
+                      ELSE IF (VDHIT(3,J) .GT. RMAX)     THEN
+                        RMAX  = VDHIT(3,J)
+                        IEND  = J
+                      END IF
+                      SX    = SX  + VDHIT(1,J)
+                      SY    = SY  + VDHIT(2,J)
+                      SX2   = SX2 + VDHIT(1,J)**2
+                      SXY   = SXY + VDHIT(1,J)*VDHIT(2,J)
+                      XM    = SX / TASS
+                      YM    = SY / TASS
+                      AINT  = (SXY - XM*SY)/(SX2 - TASS*XM**2)
+                      BINT  = YM - AINT*XM
+                      PERP  = AINT .EQ. 0.0
+                      IF ( .NOT. PERP)       AINV  = -1.0/AINT
+                    END IF
+                  END IF
+                END IF
+10            CONTINUE
+*** !!! SDB
+              CALL VDBEAM( nrun,ievt,bs,dxyzb,ierr)          
+              IF (NRUN.LT.0) THEN                           
+                    bs(1) = -0.29                          
+                    bs(2) = 0.012                          
+              ENDIF                                        
+              DIST2 =  (AINT*BS(1)-BS(2)+BINT)**2/(AINT**2+1.)
+              IF (NASST .GE. NAS .AND. NASST .GE. 3 .AND.
+     A           DIST2 .LE. DISTM2) THEN 
+*** !!! SDB
+cSDB            IF (NASST .GE. NAS .AND. NASST .GE. 3 .AND.
+cSDB   A            BINT**2/(AINT**2+1.) .LE. DISTM2)    THEN
+                CH2 = 0.0
+                IDIF = 0
+                IF ( VERT )                            THEN
+                  DO  12  J = 1, NASST
+                    CH2 = CH2 +
+     +                   (VDHIT(1,INDAST(J))-
+     -               AINT*VDHIT(2,INDAST(J))-BINT)**2
+                     IF (NAS .NE. 0)
+     I               IDIF = IDIF + IUCOMP (INDAST(J), IVDAS, NAS)
+12                CONTINUE
+                ELSE
+                  DO  14  J = 1, NASST
+                    CH2 = CH2 +
+     +                   (VDHIT(2,INDAST(J))-
+     -               AINT*VDHIT(1,INDAST(J))-BINT)**2
+                     IF (NAS .NE. 0)
+     I               IDIF = IDIF + IUCOMP (INDAST(J), IVDAS, NAS)
+14                CONTINUE
+                END IF
+                IF (IDIF .NE. NASST)                   THEN
+                  CH2       = CH2 / FLOAT (NASST)
+                  IF ((NASST .EQ. NAS .AND. CH2 .LT. CH2MIN) .OR.
+     O                 CH2 .LT. RMSLM2)                THEN
+                    CH2MIN = CH2
+                    NAS    = NASST
+                    UVDPAR(1) = VDHIT(1,ISTRT)
+                    UVDPAR(2) = VDHIT(2,ISTRT)
+                    UVDPAR(3) = VDHIT(3,ISTRT)
+                    UVDPAR(4) = VDHIT(1,IEND)
+                    UVDPAR(5) = VDHIT(2,IEND)
+                    UVDPAR(6) = VDHIT(3,IEND)
+                    IF ( VERT )                        THEN
+                      IF (AINT .NE. 0.0)               THEN
+                        UVDPAR(7) = 1.0/AINT
+                        UVDPAR(8) = -BINT/AINT
+                      ELSE
+                        UVDPAR(7) = 1.0E 32
+                        UVDPAR(8) = BINT
+                      END IF
+                    ELSE
+                      UVDPAR(7) = AINT
+                      UVDPAR(8) = BINT
+                    END IF
+                    CALL UCOPY (INDAST, IVDAS, NAS)
+                  END IF
+                END IF
+              END IF
+20          CONTINUE
+          END IF
+30      CONTINUE
+      END IF
+*
+      END
++DECK, HMREAS.
+*************************************************************************
+*                                                                       * 
+* HMREAS                                                                *
+*  Function    : Hemisphere assignemnt for found association sin the VD *
+*  arguments   : NReAs: nr of associations found                        *
+*               ReAs(1:5,i) :x,y,R of first pint, phi angel, hemisphere *
+*  calles to   : coordinate transformation :POTOCA                      *
+*                                                                       *
+*************************************************************************
+C
+C
+      SUBROUTINE HMREAS(NReAs, ReAs, thrxyz, thrpol )
+C
+*
++CDE, UXCEVT.   ! Runnr, Event ,...
++CDE, TPIOUN.   ! input/output units
+*
+**** LOCAL VARIABLES ****
+*   #################
+      REAL     thrxyz(3), thrpol(3),  ReAs(5,40) , pxyz(3)
+*
+**** EXECUTABLES ****
+*   #############
+      CosFiThr =  COS(thrpol(3))
+      SinFiThr =  SIN(thrpol(3))
+
+      DO 10 i=1,NReAs
+        pxyz(1) =  ReAs(1,i)
+        pxyz(2) =  ReAs(2,i)
+        pxyz(3) =  0
+        scpro2 = VDOT ( pxyz , thrxyz , 3 )
+        FiVd = ReAs(4,i)
+        scpro  = COS(FiVd)*CosFiThr + SIN(FiVd)*SinFiThr
+        IF ( scpro .GT. 0. ) THEN
+          ReAs(5,i)  = 1
+        ELSEIF ( scpro . LT . 0.)  THEN
+          ReAs(5,i)  = 2
+        ELSE
+          write(TPUDB,1020) Nrun, ievt
+        ENDIF
+   10 CONTINUE
+
+  999 RETURN
+*
+ 1020 FORMAT('** WARNING : TPHEMI : SCALAR PRODUCT OF THE '
+     +   ,' TRACK/NEUTRAL AND THE THRUST IS ZERO !!IVENT :',2I6 )
+*
+       END
+
+
++DECK,TMTAU. ==========================================================
+*********************************************************************
+* TMTAU
+*
+*  Function    : Evaluate if this event satisfies the line shape
+*                event selection criteria. Returns a value based on
+*                the type of event selection criteria satisfied:
+*
+*                 0 = passes no event selection criteria
+*                10 = Leptonic event
+*                11 = tau event
+*   Arguments
+*
+*      The two  arrays IEVTIN and REVTIN allow the user to pass
+*      INTEGER and REAL event information to this routine. They are
+*      compared to the cuts passed in IEVTCT and REVTCT. There need not
+*      be a one-to-one correspondence between the event values and the
+*      cuts, i.e. REVTCT(3) does not have to correspond to REVTIN(3).
+*
+*      The definitions and cuts listed here are those used for standard
+*      Team 3 leptonic and tau event selections. The array IPASS has an
+*      entry for each selection cut. If passed, it is given a value of
+*      1 and if failed a value of 0.
+*
+*      The logical variable WRTUP is set TRUE if the event passes the cuts
+*      defined for writing the PJTAG ntuple
+**
+*
+*      IEVTIN(1)  = Number of prongs in this event
+*      IEVTIN(2)  = Number of tracks in hemisphere 1
+*      IEVTIN(3)  = Number of tracks in hemisphere 2
+*      IEVTIN(4)  = number of good charged tracks in this event
+*      REVTIN(5)  = polar angle ( theta ) of the leading track in
+*                   hemisphere 1
+*      REVTIN(6)  = polar angle ( theta ) of the leading track in
+*                   hemisphere 2
+*      REVTIN(7)  = Z coordinate of the perigee of the leading track in
+*                   hemisphere 1
+*      REVTIN(8)  = Z coordinate of the perigee of the leading track in
+*                   hemisphere 2
+*      REVTIN(9)  = impact parameter of the perigee of the leading track
+*                   in the case at least 1 of the leading tracks has les then 
+*                   2 vd hits associated.
+*      REVTIN(10) = impact parameter of the perigee of the at least 1 of
+*                   the leading tracks
+*                   in the case both leading tracks have at least 2 VD hits
+*                   associated.
+*      REVTIN(11) = Isolation angle
+*      REVTIN(12) = Visible energy of the event
+*
+*           Additional definitions to define tau tau events*
+*      REVTIN(14) = radial energy of the event normalised to Ebeam
+*      REVTIN(15) = radial momentum of the event normalised to Ebeam
+*      REVTIN(16) = acollinearity
+*      REVTIN(17) = missing transverse momentum
+*
+*           Miscellaneous definitions for the ntuple
+*
+*      REVTIN(19) = minimum cosine of all tracks
+*
+*          Non stantdard selection on the impact parameters
+*
+*      REVTIN(20) = nr of VD hits associated to the leading track in
+*                   hemisphere 1
+*      REVTIN(21) = nr of VD hits associated to the leading track in
+*                   hemisphere 2
+*      REVTIN(22) = theta angle of the thrust axcis
+*      REVTIN(23) = phi angle of the thrust axcis
+*      REVTIN(24) = 1. for a dimuon candidate event, 0. for other events
+*
+*
+*           Standard cuts ( values listed in parentheses )
+*
+*
+*           Leptonic event cuts
+*
+*      IEVTCT(1)  = Maximum number of prongs
+*                   ( 12 )
+*      IEVTCT(2)  = Minimum number of tracks in hemisphere 1
+*                   ( 1 )
+*      IEVTCT(3)  = Minimum number of tracks in hemisphere 2
+*                   ( 1 )
+*      IEVTCT(4)  = Maximum number of good charged tracks in this event
+*                   ( 6 )
+*      REVTCT(5)  = Minimum value of the sine of the angular acceptance
+*                   defining the fiducial region for a leading track
+*                   ( 0.6819983 )
+*      REVTCT(6)  = not used
+*      REVTCT(7)  = Minimum Z coordinate of the perigee of the leading track
+*                   in hemisphere 1
+*                   ( 4.5 )
+*      REVTCT(8)  = Minimum Z coordinate of the perigee of the leading track
+*                   in hemisphere 2
+*                   ( 4.5 )
+*      REVTCT(9)  = Minimum impact parameter of the perigee of the leading
+*                   track in hemisphere 1 in the case at least 1 of 
+*                   the leading tracks does not have 2 VD hits associated 
+*                   to it. ( 1.5 )
+*      REVTCT(10) = Minimum impact parameter of the perigee of the leading
+*                   track in hemisphere 2 in the case at least 1 of the 
+*                   leading tracks does not have 2 VD hits associated to it.
+*                   ( 1.5 )
+*      REVTCT(30) = Minimum impact parameter of the perigee for 1 of
+*                   the leading tracs in the case both leading tracks 
+*                   have at least 2 VD hits associated.
+*                   ( 0.3 )
+*      REVTCT(11) = Minimum isolation angle
+*                   ( 160 degrees )
+*      REVTCT(12) = Minimum visible energy of the event
+*                   ( 8 GeV )
+*      REVTCT(13) = Minimum distance between Z of perigee of the two
+*                   leading tracks in each hemisphere ( for 1 v 1 events )
+*                   ( 3 )
+*
+*           Additional cuts to define tau tau events
+*
+*      REVTCT(14) = Maximum radial energy of the event
+*                   ( 0.5 ECMLEP from RUNQUAL file )
+*      REVTCT(15) = Maximum radial momentum of the event
+*                   ( 0.5 ECMLEP from RUNQUAL file )
+*      REVTCT(16) = Minimum acollinearity ( for 1 v 1 events )
+*                   ( 0.5 degrees )
+*      REVTCT(17) = Minimum missing transverse momentum ( for 1 v 1 events )
+*                   ( 0.4 GeV )
+*
+*           Miscellaneous cuts to define what is kept on the ntuple
+*
+*      IEVTCT(18) = maximum number of prongs
+*                   ( 12 )
+*      REVTCT(19) = Maximum cosine of angular acceptance defining
+*                   the fiducial region for any track
+*                   ( 0.7313537 )
+*      IEVTCT(20) = maximum number of good charged tracks
+*                   ( 8 )
+*      IEVTCT(21) = minimum number of good charged tracks
+*                   ( 2 )
+*      REVTCT(22) = minimum isolation angle
+*                   ( 150 degrees )
+*      REVTCT(23) = minimum visible energy
+*                   ( 8 Gev )
+*      REVTCT(24) = maximum radial energy
+*                   ( 200 GeV )
+*      REVTCT(25) = maximum radial momentum
+*                   ( 200 GeV )
+*
+***********************************************************************
+C
+C
+      INTEGER FUNCTION TMTAU(NECUTS,IEVTIN,IEVTCT,REVTIN,REVTCT,
+     +                     IPASS,WRTUP)
+
+C ITELVD(1,1)  = counts the events which have two leading tr. with > 2 vdhits
+C ITELVD(2,1)  = counts the events with at least 1 leading tr. with <2 vdhits
+C ITELVD(i,2)  = counts how many of those events pas de impact par. cuts
+C ITELVD(i,3)  = counts how many of those events pas detau sel. cuts
+      COMMON / TELVD / ITELVD(2,3)
+
+      INTEGER IEVTIN(NECUTS),IEVTCT(NECUTS)
+      REAL REVTIN(NECUTS),REVTCT(NECUTS)
+      INTEGER  IPASS(NECUTS)
+      LOGICAL WRTUP
+**
+*   Local variables
+*
+      PARAMETER ( PI = 3.1415926535898 , TWOPI = 6.2831853071796 )
+      PARAMETER ( HALFPI = 0.5*PI )
+      PARAMETER ( RADTOD=57.29578 )
+      PARAMETER ( DEGTOR=1./RADTOD )
+      LOGICAL IS1V1,ISLEPT,ISTAU
+*
+*   Executables
+*
+*
+*   Initialize
+*
+      IS1V1=.FALSE.
+      ISLEPT=.TRUE.
+      ISTAU=.TRUE.
+      WRTUP=.TRUE.
+      TMTAU=0
+      CALL VZERO(IPASS,NECUTS)
+*
+*
+*   Assign event values and cuts to names we can understand
+*
+*
+*   Leptonic event criteria
+*
+      NPRONG= IEVTIN(1)
+      NTRHM1= IEVTIN(2)
+      NTRHM2= IEVTIN(3)
+      NTRACK= IEVTIN(4)
+      THELT1= REVTIN(5)
+      THELT2= REVTIN(6)
+      Z1    = REVTIN(7)
+      Z2    = REVTIN(8)
+      R1    = REVTIN(9)
+      R2    = REVTIN(10)
+      ANGISO= REVTIN(11)
+      EVIS  = REVTIN(12)
+      NVD1  = REVTIN(20)
+      NVD2  = REVTIN(21)
+      THTHRU= REVTIN(22)
+      FiTHRU= REVTIN(23)
+      DIMU  = REVTIN(24)
+
+      NPRNGC= IEVTCT(1)
+      NTHM1C= IEVTCT(2)
+      NTHM2C= IEVTCT(3)
+      NTRKCT= IEVTCT(4)
+      SINTCT= REVTCT(5)
+      Z1CUT = REVTCT(7)
+      Z2CUT = REVTCT(8)
+      R1CUT = REVTCT(9)
+      R2CUT = REVTCT(10)
+      RECUT = REVTCT(30)
+      ANGICT= REVTCT(11)*DEGTOR
+      EVISCT= REVTCT(12)
+      Z11CUT= REVTCT(13)
+      
+*
+*   Additional information for tau tau events
+*
+      ERAD  = REVTIN(14)
+      PRAD  = REVTIN(15)
+      ACOL  = REVTIN(16)
+      PTMISS= REVTIN(17)
+
+      ERADCT= REVTCT(14)
+      PRADCT= REVTCT(15)
+      ACOLCT= REVTCT(16)*DEGTOR
+      PTMISC= REVTCT(17)
+
+*
+*   Miscellaneous information
+*
+*
+      COSMIN=REVTIN(19)
+
+      NPRGMX= IEVTCT(18)
+      COSCUT= REVTCT(19)
+      NTRKMX= IEVTCT(20)
+      NTRKMN= IEVTCT(21)
+      ANGIMN= REVTCT(22)*DEGTOR
+      EVISMN= REVTCT(23)
+      ERADMX= REVTCT(24)/45.
+      PRADMX= REVTCT(25)/45.
+
+*
+*   Perform cuts
+*
+*
+*   Leptonic events
+*
+*
+*   Number of prongs <= NPRNGC
+*
+      IF ( NPRONG .LE. NPRNGC ) IPASS(1)=1
+
+*
+*
+*   Check if there is at least NTHMxC tracks per hemisphere
+*   ( where x=1 or 2 )
+*
+      IF ( ( NTRHM1 .GE. NTHM1C ) .AND. ( NTRHM2 .GE. NTHM2C ) )
+     +   IPASS(2)=1
+
+*
+*   Number of good charged tracks <= NTRKCT
+*
+      IF ( NTRACK .LE. NTRKCT )   IPASS(3)=1
+*
+*   Is this 1 v 1?
+*
+      IF ( NTRACK .EQ. 2 ) IS1V1=.TRUE.
+*
+*   At least one leading track within fiducial region,
+*   thrust axcis pointing in the fiducial region,    
+*
+      SINT1=SIN(THELT1)
+      SINT2=SIN(THELT2)
+      SINTMX=MAX(SINT1,SINT2)
+      IF (( SINTMX.GE.SINTCT).AND.(SIN(THTHRU).GT.SINTCT)) IPASS(4)=1
+      IF ((SINT1.GT.0.999390827019).AND.(SINT2.GT.0.999390827019))
+     +                                                     IPASS(4)=0
+*
+*
+*   Two leading tracks close to interaction point
+*
+      IF ( ABS(Z1) .LE. Z1CUT ) IPASS(5)=1
+      IF ( ABS(Z2) .LE. Z2CUT ) IPASS(6)=1
+      IF( (NVD1.GE.2).AND.(NVD2.GE.2) )   THEN
+           ITELVD(1,1) = ITELVD(1,1) + 1 
+           IF ( (ABS(R1).LE.RECUT) .OR. (ABS(R2).LE.RECUT) ) THEN
+               IPASS(7)=1
+               IPASS(8)=1
+           ENDIF
+      ELSE
+           ITELVD(2,1) = ITELVD(2,1) + 1 
+           IF (( ABS(R1).LE.RECUT ).OR.( ABS(R2).LE.RECUT )) THEN
+               IPASS(7)=1
+               IPASS(8)=1
+           ENDIF    
+      ENDIF 
+      IF ( ABS(R1) .GT. 10.  ) IPASS(7)=0
+      IF ( ABS(R2) .GT. 10.  ) IPASS(8)=0
+      IF ((IPASS(7).EQ.1).AND.(IPASS(8).EQ.1)) THEN
+            IF( (NVD1.GE.2).AND.(NVD2.GE.2) )  THEN
+               ITELVD(1,2) = ITELVD(1,2) + 1
+            ELSE
+               ITELVD(2,2) = ITELVD(2,2) + 1
+            ENDIF
+      ENDIF
+
+*
+*   Isolation angle
+*
+      IF ( ANGISO .GE. ANGICT ) IPASS(9)=1
+*
+*   Evis
+*
+      IF ( EVIS .GE. EVISCT ) IPASS(10)=1
+*
+*   Strict cuts for 1.vs.1 events
+*
+      IF ( IS1V1 ) THEN
+         IF ( ABS(Z1-Z2) .LE. Z11CUT ) IPASS(11)=1
+      ENDIF
+*
+*   Does this event satisfy the leptonic selection
+*
+      DO 10,I=1,10
+         IF ( ( ISLEPT ) .AND. ( IPASS(I) .EQ. 0 ) ) THEN
+            ISLEPT=.FALSE.
+            ISTAU=.FALSE.
+         ENDIF
+   10 CONTINUE
+      IF ( ISLEPT ) THEN
+         DO 20,I=11,11
+            IF ( ( IS1V1 ) .AND. ( IPASS(I) .EQ. 0 ) ) THEN
+               ISLEPT=.FALSE.
+               ISTAU=.FALSE.
+            ENDIF
+   20    CONTINUE
+      ENDIF
+      IF ( ISLEPT ) TMTAU=10
+
+*
+*   Further cuts for tau+tau- events
+*
+      Fimod =  MOD(Fithru*RADTOD , 15.) + 7.5
+      IF( (Fimod.GT.14).AND.(Fimod.LT.16) ) THEN
+        IF ( ERAD .LE. 0.6)      IPASS(12)=1
+      ELSE
+        IF ( ERAD .LE. ERADCT ) IPASS(12)=1
+      ENDIF
+      
+
+      IPASS(13)=1
+      IF ( (DIMU.EQ.1.).AND.(PRAD.GT.PRADCT) ) IPASS(13)=0
+ 
+      IF ( IS1V1 ) THEN
+         IF ( ACOL .GE. ACOLCT ) IPASS(14)=1
+         IF ( PTMISS .GE. PTMISC ) IPASS(15)=1
+      ENDIF
+*
+*   Does this event satisfy the tau+ tau- selection
+*   ( must pass cuts to be a leptonic first )
+*
+      IF ( ISLEPT ) THEN
+         DO 30,I=12,13
+            IF ( ( ISTAU ) .AND. ( IPASS(I) .EQ. 0 ) ) THEN
+               ISTAU=.FALSE.
+            ENDIF
+   30    CONTINUE
+         IF ( ISTAU ) THEN
+            DO 40,I=14,15
+               IF ( ( IS1V1 ) .AND. ( IPASS(I) .EQ. 0 ) )
+     +         ISTAU=.FALSE.
+   40       CONTINUE
+         ENDIF
+      ENDIF
+      IF ( ISTAU ) TMTAU=11
+      IF ( IS1V1 ) IPASS(16)=1
+
+*
+      IF (ISTAU) THEN
+       IF( (NVD1.GE.2).AND.(NVD2.GE.2) )  THEN
+         ITELVD(1,3) = ITELVD(1,3) + 1
+       ELSE
+         ITELVD(2,3) = ITELVD(2,3) + 1
+       ENDIF
+      ENDIF
+*
+*   Information to help determine if event should be kept on ntuple
+*
+*
+*
+*   Number of prongs
+*
+      IF ( NPRONG .LE. NPRGMX ) IPASS(17)=1
+*
+*   At least one track in the fiducial region
+*
+      IF ( COSMIN .LE. COSCUT ) IPASS(18)=1
+*
+*   Number of tracks ...
+*
+      IF ( NTRACK .LE. NTRKMX ) IPASS(19)=1
+*
+      IF ( NTRACK .GE. NTRKMN ) IPASS(20)=1
+*
+*   Isolation angle
+*
+      IF ( ANGISO .GE. ANGIMN ) IPASS(21)=1
+*
+*   Evis
+*
+      IF ( EVIS .GE. EVISMN ) IPASS(22)=1
+*
+*   Erad
+*
+      IF ( ERAD .LE. ERADMX ) IPASS(23)=1
+*
+*   Prad
+*
+      IF ( PRAD .LE. PRADMX ) IPASS(24)=1
+*
+*   Should this event be written to the ntuple?
+*
+      DO 50,I=17,24
+         IF ( ( WRTUP ) .AND. ( IPASS(I) .EQ. 0 ) ) WRTUP=.FALSE.
+   50 CONTINUE
+*
+*   If NTRKMN >= 2, require at least one track per hemisphere
+*
+      IF ( NTRKMN .GE. 2 ) THEN
+         IF ( ( NTRHM1 .GE. 1 ) .AND. ( NTRHM2 .GE. 1 ) ) THEN
+            IPASS(25)=1
+         ELSE
+            WRTUP=.FALSE.
+         ENDIF
+      ENDIF
+*
+*
+      RETURN
+      END
+                 
+*
+           
++DECK,tmstat.
+************************************************************
+*                                                          *
+* TMSTAT                                                   *
+*                                                          *
+* Purpose: Updat statistics                                *
+*                                                          *
+************************************************************
+C
+      SUBROUTINE TMSTAT(ITAU,NTOPOL,NHM,PTAU)
+C
+C
++CDE, TMCUTS.
++CDE, TMSDES.
++CDE, TMEINF.
+       
+        INTEGER NTOPOL(8), NHM(3,2)
+        REAL    PTAU(7,2)
+                  
+        nr1 = ntopol(1)
+        nr2 = ntopol(5)
+        nrmc1 = nhm(3,1)
+        nrmc2 = nhm(3,2)
+        idec1 = PTAU(6,1)
+        idec2 = PTAU(6,2)
+
+        IF (IPASS(1).EQ.0) GOTO 66
+        ITEL(1) = ITEL(1) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,1))
+         IF (ISSIM) THEN
+        ITDEC(idec1,1) = ITDEC(idec1,1) + 1
+        ITDEC(idec2,1) = ITDEC(idec2,1) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,1))
+         ENDIF
+
+        IF ((IPASS(2).EQ.0).OR.(IPASS(3).EQ.0))  GOTO 66
+        ITEL(2) = ITEL(2) + 1
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,2))
+         IF (ISSIM) THEN
+        ITDEC(idec1,2) = ITDEC(idec1,2) + 1
+        ITDEC(idec2,2) = ITDEC(idec2,2) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,2))
+         ENDIF
+
+        IF (IPASS(4).EQ.0) GOTO 66
+        ITEL(3) = ITEL(3) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,3))
+         IF (ISSIM) THEN
+        ITDEC(idec1,3) = ITDEC(idec1,3) + 1
+        ITDEC(idec2,3) = ITDEC(idec2,3) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,3))
+         ENDIF
+
+        IF ((IPASS(5).EQ.0).OR.(IPASS(6).EQ.0)) GOTO 66
+        IF ((IPASS(7).EQ.0).OR.(IPASS(8).EQ.0)) GOTO 66
+        ITEL(4) = ITEL(4) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,4))
+         IF (ISSIM) THEN
+        ITDEC(idec1,4) = ITDEC(idec1,4) + 1
+        ITDEC(idec2,4) = ITDEC(idec2,4) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,4))
+         ENDIF
+
+        IF (IPASS(9).EQ.0) GOTO 66
+        ITEL(5) = ITEL(5) + 1
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,5))
+         IF (ISSIM) THEN
+        ITDEC(idec1,5) = ITDEC(idec1,5) + 1
+        ITDEC(idec2,5) = ITDEC(idec2,5) + 1  
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,5))
+         ENDIF
+
+
+        IF (IPASS(10).EQ.0) GOTO 66
+        ITEL(6) = ITEL(6) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,6))
+         IF (ISSIM) THEN
+        ITDEC(idec1,6) = ITDEC(idec1,6) + 1
+        ITDEC(idec2,6) = ITDEC(idec2,6) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,6))
+         ENDIF
+
+        IF (IPASS(13).EQ.0) GOTO 66
+        ITEL(7) = ITEL(7) + 1
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,7))
+         IF (ISSIM) THEN
+        ITDEC(idec1,7) = ITDEC(idec1,7) + 1
+        ITDEC(idec2,7) = ITDEC(idec2,7) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,7))
+         ENDIF
+
+        IF (IPASS(12).EQ.0) GOTO 66
+        ITEL(8) = ITEL(8) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,8))
+         IF (ISSIM) THEN
+        ITDEC(idec1,8) = ITDEC(idec1,8) + 1
+        ITDEC(idec2,8) = ITDEC(idec2,8) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,8))
+         ENDIF
+  
+        IF ((Nr1+Nr2).NE.2)  GOTO 66    ! 1-1 promgs 
+        ITEL(9) = ITEL(9) + 1 
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,9))
+         IF (ISSIM) THEN
+        ITDEC(idec1,9) = ITDEC(idec1,9) + 1
+        ITDEC(idec2,9) = ITDEC(idec2,9) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,9))
+         ENDIF
+
+        IF ((IPASS(11).EQ.0).OR.(IPASS(14).EQ.0).OR.
+     &      (IPASS(15).EQ.0))  GOTO 66
+        ITEL(10)= ITEL(10)+ 1
+        CALL STAT_TOPO( nr1, nr2, iteltop(1,1,10))
+         IF (ISSIM) THEN
+        ITDEC(idec1,10) = ITDEC(idec1,10) + 1  
+        ITDEC(idec2,10) = ITDEC(idec2,10) + 1
+        CALL STAT_TOPO( nrmc1, nrmc2, iteltopmc(1,1,10))
+         ENDIF
+
+   66   CONTINUE      
+
+
+        IF ( ITAU.EQ.11)  THEN
+           NREVT(4) = NREVT(4) + 1
+           CALL STAT_TOPO(nr1, nr2, nrtop)
+            IF (ISSIM) THEN
+           ITAUDEC(idec1) = ITAUDEC(idec1)+1
+           ITAUDEC(idec2) = ITAUDEC(idec2)+1
+           CALL STAT_TOPO(nrmc1, nrmc2, nrtopmc)
+            ENDIF
+        ENDIF
+        IF ((ITAU.EQ.10).OR.(ITAU.EQ.11))  THEN
+           NREVT(5) = NREVT(5) + 1 
+           CALL STAT_TOPO(nr1, nr2, nrLept)
+            IF (ISSIM) THEN
+           ILEPDEC(idec1) = ILEPDEC(idec1)+1
+           ILEPDEC(idec2) = ILEPDEC(idec2)+1
+           CALL STAT_TOPO(nrmc1, nrmc2, nrLeptmc)
+            ENDIF
+        ENDIF
+
+        RETURN
+        END
+
++DECK, STAT_TOPO
+        SUBROUTINE STAT_TOPO( Nr1 , Nr2 , NR)
+**************************************************************************
+* STAT_TOPO
+*   function : update statistics on the topology
+***************************************************************************
+*
+**** LOCAL VARIABLES ****
+*    ================
+      INTEGER Nr(8,8), NTr1,Ntr2
+
+***** EXECUTABLES ****
+*    ===========
+      IF ( (NR1*NR2) .EQ. 0)  GOTO 999   ! at least 1 track per hemi
+
+      IF (NR2 .GT. NR1) THEN
+         NTR1 = NR2
+         NTR2 = NR1
+      ELSE
+         NTR1 = NR1
+         NTR2 = NR2
+      ENDIF
+
+      IF (NTR1.LE.7) THEN
+         Nr(NTR1,NTR2) = Nr(NTR1,NTR2) + 1
+      ELSEIF (NTR2.LE.7) THEN
+         Nr(   8,NTR2) = Nr(   8,NTR2) + 1 
+      ELSE
+         Nr(8,8) = Nr(8,8) + 1 
+      ENDIF
+
+ 999  CONTINUE
+                 
+      RETURN
+      END
+    
++DECK, TMFILC.
+         SUBROUTINE TMFILC(ITAU, NECUTS, IPASS)
+*--------------------------------------------------------------------
+* TMFIMC
+*   function : fill the CUTS common block with outcome of the selction-
+*             criteria.
+*   author    : SDB.
+*--------------------------------------------------------------------
++CDE, VUBNTUP.   ! common block with the new ntuple variables.
+
+
+      INTEGER  IPASS(NECUTS)
+
+        ITAUS  = ITAU
+        IPASS1 = IPASS(1)
+        IPASS2 = IPASS(2)
+        IPASS3 = IPASS(3)
+        IPASS4 = IPASS(4)
+        IPASS5 = IPASS(5)
+        IPASS6 = IPASS(6)
+        IPASS7 = IPASS(7)
+        IPASS8 = IPASS(8)
+        IPASS9 = IPASS(9)
+        IPASS10= IPASS(10)
+        IPASS11= IPASS(11)
+        IPASS12= IPASS(12)
+        IPASS13= IPASS(13)
+        IPASS14= IPASS(14)
+        IPASS15= IPASS(15)
+        IPASS16= IPASS(16)
+
+        RETURN
+        END
+    
+*
++DECK,TMFIMC .
+      SUBROUTINE TMFIMC(PTAU,NHM,PMCTRK)
+*--------------------------------------------------------------------
+* TMFIMC
+*   function : fill the NTUPMC common block with MC variables
+*               (needed to fill the ntuple)
+*   author    : SDB.
+*--------------------------------------------------------------------
++CDE, VUBNTUP.   ! common block with the new ntuple variables.
+*
+*  Arguments
+*
+*  PTAU(1:3,i) = p, theta, phi (in rad.)
+*  PTAU(4:5,i) = charge , helicity
+*  PTAU(6,i)   = decay mode (KORALZ conv.)
+*                  1 = electron
+*                  2 = muon
+*                  3 = pion
+*                  4 = rho
+*                  5 = a1
+*                  6 = kaon
+*                  7 = K*
+*                  8 = multi pion
+*  PTAU(7,i)   = charged pion multiplicity
+*
+*  NHM(1,I) = Number of charged + neutral tracks in hemisphere I
+*  NHM(2,I) = Number of charged tracks in hemisphere I
+*  NHM(3,I) = Number of charged tracks in hemisphere I, Dalitz decay
+*              products not counted
+*
+*  PMCTRK(1:3, ITRACK) = p, theta, phi (in rad.)
+*  PMCTRK( 4 , ITRACK) = Particle ID        (DELPSIM convention)
+*  PMCTRK( 5 , ITRACK) = Particle ID mother (DELPSIM convention)
+*  PMCTRK( 6 , ITRACK) = charge
+*  PMCTRK( 7 , ITRACK) = Hemisphere to which the tau is assigned
+*
+        INTEGER  NHM(3,2)
+        REAL     PTAU(7,2) , PMCTRK(7,2)
+
+**** EXECUTABLES ****
+
+*  Vul monte-carlo information
+         iMC1   = 0
+         iMC2   = 0
+         GenTop = MAX( nhm(3,1)*10+nhm(3,2) , nhm(3,2)*10+nhm(3,1) )
+         PTauH1 = PTAU(1,1)
+         ThTauH1= PTAU(2,1)
+         FiTauH1= PTAU(3,1) 
+         DeTH1  = NINT( PTAU(6,1) )
+         PolH1  = PTAU(5,1)
+         NMcH1  = NHm(1,1)
+         NMcTH1 = NHm(2,1)
+         PTauH2 = ptau(1,2)
+         ThTauH2= ptau(2,2)
+         FiTauH2= ptau(3,2)
+         DeTH2  = NINT( PTAU(6,2) )
+         PolH2  = PTAU(5,2)
+         NMcH2  = NHM(1,2)
+         NMcTH2 = NHm(2,2)
+         DO 40 iMC=1, (NHm(1,1)+NHm(1,2))
+            IF (NINT( PMCTRK(7,iMC)) .EQ. 1)  THEN
+                iMC1 = iMC1 + 1
+                IF(iMC1 .GT. 15 ) GOTO 30
+                CXMcH1(iMC1)= NINT( PMCTRK(4,iMC))
+                CMMcH1(iMC1)= NINT( PMCTRK(5,iMC))
+                PPMcH1(iMC1)= PMCTRK(1,iMC)
+                THMcH1(iMC1)= PMCTRK(2,iMC)
+                FIMcH1(iMC1)= PMCTRK(3,iMC)
+  30            CONTINUE
+            ELSE IF (NINT( PMCTRK(7,iMC)) .EQ. 2)  THEN
+                iMC2 = iMC2 + 1
+                IF(iMC2 .GT. 15 ) GOTO 35
+                CXMcH2(iMC2)= NINT( PMCTRK(4,iMC))
+                CMMcH2(iMC2)= NINT( PMCTRK(5,iMC))
+                PPMcH2(iMC2)= PMCTRK(1,iMC)
+                THMcH2(iMC2)= PMCTRK(2,iMC)
+                FIMcH2(iMC2)= PMCTRK(3,iMC)
+  35            CONTINUE
+              ENDIF
+  40        CONTINUE
+
+      RETURN
+      END
+*
++DECK,FILVUB. 
+************************************************************************
+* FILVUB
+*   function : fill the common block "VUBNTUP", which contains the
+*              ntuple  variables.
+*
+************************************************************************
+C
+C
+      SUBROUTINE FILVUB(track,err,Est,divt,ifilt,ihm,Echa,Econe,
+     &  Eneu,EmLa,HaLa,nvd,nvdhits,nrevd,revd,nod,dEdx,mamb,
+     &  thrp,lt,ntopo,nhm,corf,elec)
+C
+C
++CDE, UXCEVT.   ! Nrun, Ievt, ...
++CDE, VUBNTUP.  ! common block with the new ntuple variables.
++CDE, TPCDE.    ! Pointers to the blocklets of the DST
+C
+C
+*
+**** LOCAL VARIABLES ****
+*   #################
+       REAL     track(13,nPAmax), err(4,nPAmax)  , Est(NPAMAX)   ,
+     &          divt(2,nPAmax), 
+     &          Echa(12,nPAmax) , Econe(4,nPAmax), Eneu(5,NPAMAX),
+     &          EmLa(17,nPAmax) , HaLa(14,nPAmax), revd(5,40)    ,
+     &          dEdx(2,nPAmax)  , thrp(3)        , corf(NPAMAX)  ,
+     &          Elec(9,nPAmax)      
+
+       INTEGER  ifilt(nPAmax)   , ihm(nPAmax)    , nvd(nPAmax)   ,
+     &          nrevd           , Nod(nPAmax)    , lt(2)         ,
+     &          ntopo(8)        , nhm(3,2)       , NVdHits       ,
+     &          mamb(nPAmax)
+
+       REAL     pol(3)
+
+**** EXECUTABLES ****
+*   #############
+
+         NChaH1 = ntopo(1)
+         NEmNH1 = ntopo(2)
+         NHaNH1 = ntopo(3)
+         NproH1 = ntopo(4)
+         NChaH2 = ntopo(5)
+         NEmNH2 = ntopo(6)
+         NHaNH2 = ntopo(7)
+         NproH2 = ntopo(8)
+         NVdHit = NVdHits
+         NChaH1 = 0
+         NChaH2 = 0
+         NrEmNH1 = 0
+         NrHaNH1 = 0
+         NrEmNH2 = 0
+         NrHaNH2 = 0
+         DO 20 , iPA=1,NPA
+          Qtr =  track(9,iPa)
+*         code wordt for EM and HAD. Layer energies
+c          NEmLay = 0
+c          IF (EmLa(8,iPA) .GT.0.) NEmLAY = 1
+c          IF (EmLa(9,iPA) .GT.0.) NEmLAY = NEmLAY + 2
+c          IF (EmLa(10,iPA).GT.0.) NEmLAY = NEmLAY + 4
+c          IF (EmLa(11,iPA).GT.0.) NEmLAY = NEmLAY + 8
+c          IF (EmLa(12,iPA).GT.0.) NEmLAY = NEmLAY + 16
+c          IF (EmLa(13,iPA).GT.0.) NEmLAY = NEmLAY + 32
+c          IF (EmLa(14,iPA).GT.0.) NEmLAY = NEmLAY + 64
+c          IF (EmLa(15,iPA).GT.0.) NEmLAY = NEmLAY + 128
+c          IF (EmLa(16,iPA).GT.0.) NEmLAY = NEmLAY + 256
+          NHaLay = 0
+          IF (HaLa(6 ,iPA).GT.0.) NHaLay = 1
+          IF (HaLa(7 ,iPA).GT.0.) NHaLay = NHaLay + 2
+          IF (HaLa(8 ,iPA).GT.0.) NHaLay = NHaLay + 4
+          IF (HaLa(9 ,iPA).GT.0.) NHaLay = NHaLay + 8
+                                                                
+*         fill ntuple variables
+          IF (ihm(iPa).NE.1)  GO TO 10   ! select tracks from the hemi 1
+           IF ( ifilt(iPA) .EQ. 1) THEN  ! good charged tracks
+             NChaH1 = NChaH1 + 1         ! count nr of good cha tr hemi 1
+             IF (NChaH1 .GT. 7 ) GOTO 11  ! save only first 5
+               IF (Qtr.EQ.2.)     Qtr=-1.
+               PQH1(NChaH1)   = track(4,iPA) * Qtr
+               TheH1(NChaH1)  = track(6,iPA)
+               FiH1(NChaH1)   = track(5,iPA)
+               McodH1(NChaH1) = mamb(iPA)
+               EeH1(NChaH1)   = Est(iPA)
+               RadH1(NChaH1)  = track(8,iPA)
+               dEdxH1(NChaH1) = dEdx(1,iPA)
+               EemH1(NChaH1)  = Echa(6,iPA)
+               EhaH1(NChaH1)  = Echa(12,iPA)
+               trLeH1(NChaH1) = track(10,iPA)
+               ZimpH1(NChaH1) = divt(2,iPA)
+               RimpH1(NChaH1) = divt(1,iPA)
+c               ElecH1(NChaH1) = 0
+c               MCH1(NChaH1)   = 0
+               DPpH1(NChaH1)  = err(1,iPA)
+               DThH1(NChaH1)  = err(3,iPA)
+               DFiH1(NChaH1)  = err(2,iPA)
+               DEeH1(NChaH1)  = err(4,iPA)
+               SdEdxH1(NChaH1)= dEdx(2,iPA)
+               NVdH1(NChaH1)  = nvd(iPA)
+c               NEmLaH1(NChaH1)= NEmLay
+c               NHaLaH1(NChaH1)= NHaLay
+c               dExPiH1(NChaH1)= dEdxPi(iPA)
+               TaEmH1(NChaH1) = EmLa(2 ,iPA)
+               FaEmH1(NChaH1) = EmLa(3 ,iPA)
+               ThEmH1(NChaH1) = EmLa(5 ,iPA)
+               FiEmH1(NChaH1) = EmLa(6 ,iPA)
+               E1EmH1(NChaH1) = EmLa(8 ,iPA)
+               E2EmH1(NChaH1) = EmLa(9 ,iPA)
+               E3EmH1(NChaH1) = EmLa(10,iPA)
+               E4EmH1(NChaH1) = EmLa(11,iPA)
+               E5EmH1(NChaH1) = EmLa(12,iPA)
+               E6EmH1(NChaH1) = EmLa(13,iPA)
+               E7EmH1(NChaH1) = EmLa(14,iPA)
+               E8EmH1(NChaH1) = EmLa(15,iPA)
+               E9EmH1(NChaH1) = EmLa(16,iPA)
+               E1HaH1(NChaH1) = HaLa(6 ,iPA)
+               E2HaH1(NChaH1) = HaLa(7 ,iPA)
+               E3HaH1(NChaH1) = HaLa(8 ,iPA)
+               E4HaH1(NChaH1) = HaLa(9 ,iPA)
+               CorCH1(NChaH1) = corf(iPA)
+               ElecH1(NChaH1) = ELEC(1,iPA)
+               FiBoH1(NChaH1) = ELEC(8,iPA)
+               HPCCH1(NChaH1) = ELEC(9,iPA)
+ 11          CONTINUE
+           ELSEIF (ifilt(iPA) .NE. 0) THEN     ! neutral track
+*           EM neutral
+            IF ((ifilt(iPA).EQ.2).OR.(ifilt(iPA).EQ.22) ) THEN 
+              IF (NrEmNH1.GE.7)  GOTO 12
+                NrEmNH1 = NrEmNH1 + 1
+                IF (EmLa(1,iPA).NE.0.) THEN     
+                  EEmNH1(NrEmNH1) = EmLa(1,iPA) ! Energy
+                  THeNH1(NrEmNH1) = EmLa(2,iPA) ! theta position
+                  FiNH1(NrEmNH1)  = EmLa(3,iPA) ! phy position
+                ELSE                     ! for creations of ELEPHANT
+                  CALL CATOPO(Eneu(2,ipa),pol)
+                  EEmNH1(NrEmNH1) = Eneu(1,iPA) ! Energy
+                  THeNH1(NrEmNH1) = Pol(2)      ! theta position
+                  FiNH1(NrEmNH1)  = Pol(3)      ! phy position
+                ENDIF    
+                McoNH1(NrEmNH1) = mamb(iPA)
+c                EGPNH1(NrEmNH1) = 0.
+c                TIdNH1(NrEmNH1) = 0
+c                HLaNH1(NrEmNH1) = 0
+c                NEmLNH1(NrEmNH1)= NEmLay
+                E1NH1(NrEmNH1) = EmLa(8,iPA)
+                E2NH1(NrEmNH1) = EmLa(9,iPA)
+                E3NH1(NrEmNH1) = EmLa(10,iPA)
+                E4NH1(NrEmNH1) = EmLa(11,iPA)
+                E5NH1(NrEmNH1) = EmLa(12,iPA)
+                E6NH1(NrEmNH1) = EmLa(13,iPA)
+                E7NH1(NrEmNH1) = EmLa(14,iPA)
+                E8NH1(NrEmNH1) = EmLa(15,iPA)
+                E9NH1(NrEmNH1) = EmLa(16,iPA)
+c               RaMNH1 = 0.
+                corfH1(NrEmNH1)= corf(iPA)
+ 12           CONTINUE
+            ENDIF
+*           hadronic neutral
+            IF ((ifilt(iPA).EQ.20).OR.(ifilt(iPA).EQ.22) ) THEN 
+              IF ( NrHaNH1.GE.2) GOTO 13
+                NrHaNH1 = NrHaNH1 + 1
+                IF (HaLa(1,iPA).NE.0.) THEN
+                  EHaHH1(NrHaNH1) = HaLa(1,iPA) ! energy
+                  THeHH1(NrHaNH1) = HaLa(2,iPA) ! theta
+                  FiHH1(NrHaNH1)  = HaLa(3,iPA) ! phy
+                ELSE
+                  CALL CATOPO(Eneu(2,iPA),Pol)
+                  EHaHH1(NrHaNH1) = Eneu(1,iPA) ! energy
+                  THeHH1(NrHaNH1) = Pol(2)      ! theta
+                  FiHH1(NrHaNH1)  = Pol(3)      ! phy
+                ENDIF  
+                McoHH1(NrHaNH1) = mamb(iPA)
+                NHaLNH1(NrHaNH1)= NHaLay
+c                IF (NrHaNH1.EQ.1) THEN        ! fist had. neutral only
+c                  E1HH1 = HaLa(6,iPA)        ! layer energies
+c                  E2HH1 = HaLa(7,iPA)
+c                  E3HH1 = HaLa(8,iPA)
+c                  E4HH1 = HaLa(9,iPA)
+c                ENDIF
+ 13           CONTINUE
+            ENDIF
+           ENDIF
+ 10        CONTINUE                          ! Second hemisfeer
+           IF (ihm(iPa).NE.2)  GO TO 20   ! select tracks from the hemi 2
+           IF ( ifilt(iPA) .EQ. 1) THEN   ! good charged track
+             NChaH2 = NChaH2 + 1
+             IF (NChaH2.GT.7) GOTO 21
+               IF (Qtr.EQ.2.)     Qtr=-1.
+               PQH2(NChaH2)   = track(4,iPA) * Qtr
+               TheH2(NChaH2)  = track(6,iPA)
+               FiH2(NChaH2)   = track(5,iPA)
+               McodH2(NChaH2) = mamb(iPA)
+               EeH2(NChaH2)   = Est(iPA)
+               RadH2(NChaH2)  = track(8,iPA)
+               dEdxH2(NChaH2) = dEdx(1,iPA)
+               EemH2(NChaH2)  = Echa(6,iPA)
+               EhaH2(NChaH2)  = Echa(12,iPA)
+               trLeH2(NChaH2) = track(10,iPA)
+               ZimpH2(NChaH2) = divt(2,iPA)
+               RimpH2(NChaH2) = divt(1,iPA)
+c               ElecH2(NChaH2) = 0
+c               MCH2(NChaH2)   = 0
+               DPpH2(NChaH2)  = err(1,iPA)
+               DThH2(NChaH2)  = err(3,iPA)
+               DFiH2(NChaH2)  = err(2,iPA)
+               DEeH2(NChaH2)  = err(4,iPA)
+               SdEdxH2(NChaH2)= dEdx(2,iPA)
+               NVdH2(NChaH2)  = nvd(iPA)
+c               NEmLaH2(NChaH2)= NEmLay
+c               NHaLaH2(NChaH2)= NHaLay
+c               dExPiH2(NChaH2)= dEdxPi(iPA)
+               TaEmH2(NChaH2) = EmLa(2 ,iPA)
+               FaEmH2(NChaH2) = EmLa(3 ,iPA)
+               ThEmH2(NChaH2) = EmLa(5 ,iPA)
+               FiEmH2(NChaH2) = EmLa(6 ,iPA)
+               E1EmH2(NChaH2) = EmLa(8 ,iPA)
+               E2EmH2(NChaH2) = EmLa(9 ,iPA)
+               E3EmH2(NChaH2) = EmLa(10,iPA)
+               E4EmH2(NChaH2) = EmLa(11,iPA)
+               E5EmH2(NChaH2) = EmLa(12,iPA)
+               E6EmH2(NChaH2) = EmLa(13,iPA)
+               E7EmH2(NChaH2) = EmLa(14,iPA)
+               E8EmH2(NChaH2) = EmLa(15,iPA)
+               E9EmH2(NChaH2) = EmLa(16,iPA)
+               E1HaH2(NChaH2) = HaLa(6 ,iPA)
+               E2HaH2(NChaH2) = HaLa(7 ,iPA)
+               E3HaH2(NChaH2) = HaLa(8 ,iPA)
+               E4HaH2(NChaH2) = HaLa(9 ,iPA)
+               CorCH2(NChaH2) = corf(iPA)
+               ElecH2(NChaH2) = ELEC(1,iPA)
+               FiBoH2(NChaH2) = ELEC(8,iPA)
+               HPCCH2(NChaH2) = ELEC(9,iPA)
+21          CONTINUE
+           ELSE IF(ifilt(iPA).NE.0) THEN        ! neutral track
+*           EM neutral
+            IF ((ifilt(iPA).EQ.2).OR.(ifilt(iPA).EQ.22) ) THEN   
+               IF (NrEmNH2.GE.7) GOTO 22
+               NrEmNH2 = NrEmNH2 + 1
+               IF (EmLa(1,iPA).NE.0.) THEN
+                 EEmNH2(NrEmNH2) = Emla(1,iPA) ! Energy
+                 THeNH2(NrEmNH2) = EmLa(2,iPA) ! theta position
+                 FiNH2(NrEmNH2)  = EmLa(3,iPA) ! phy position
+               ELSE
+                 CALL CATOPO(Eneu(2,ipa),Pol)
+                 EEmNH2(NrEmNH2) = Eneu(1,iPA) ! Energy
+                 THeNH2(NrEmNH2) = Pol(2)      ! theta position
+                 FiNH2(NrEmNH2)  = Pol(3)      ! phy position
+               ENDIF  
+               McoNH2(NrEmNH2) = mamb(iPA)
+c               EGPNH2(NrEmNH2) = 0.
+c               TIdNH2(NrEmNH2) = 0
+c               HLaNH2(NrEmNH2) = 0
+c               NEmLNH2(NrEmNH2)= NEmLay
+               E1NH2(NrEmNH2) = EmLa(8,iPA)       ! layer energies
+               E2NH2(NrEmNH2) = EmLa(9,iPA)
+               E3NH2(NrEmNH2) = EmLa(10,iPA)
+               E4NH2(NrEmNH2) = EmLa(11,iPA)
+               E5NH2(NrEmNH2) = EmLa(12,iPA)
+               E6NH2(NrEmNH2) = EmLa(13,iPA)
+               E7NH2(NrEmNH2) = EmLa(14,iPA)
+               E8NH2(NrEmNH2) = EmLa(15,iPA)
+               E9NH2(NrEmNH2) = EmLa(16,iPA)
+c               RaMNH2 = 0.
+               corfH2(NrEmNH2)= corf(iPA)
+ 22            CONTINUE
+            ENDIF
+*           had neutral
+            IF ((ifilt(iPA).EQ.20).OR.(ifilt(iPA).EQ.22) ) THEN                
+              IF (NrHaNH2.GE.2) GOTO 23
+               NrHaNH2 = NrHaNH2 + 1
+               IF (HaLa(1,iPA).Ne.0.) THEN
+                 EHaHH2(NrHaNH2) = HaLa(1,iPA) ! energy
+                 THeHH2(NrHaNH2) = HaLa(2,iPA) ! theta
+                 FiHH2(NrHaNH2)  = HaLa(3,iPA) ! phy
+               ELSE
+                 CALL CATOPO(Eneu(2,ipa),pol)
+                 EHaHH2(NrHaNH2) = Eneu(1,iPA) ! energy
+                 THeHH2(NrHaNH2) = Pol(2)      ! theta
+                 FiHH2(NrHaNH2)  = Pol(3)      ! phy
+               ENDIF
+               McoHH2(NrHaNH2) = mamb(iPA)
+               NHaLNH2(NrHaNH2)= NHaLay
+c               IF (NrHaNH2.EQ.1) THEN        ! fist had. neutral only
+c                  E1HH2 = HaLa(6,iPA)       ! layer energies
+c                  E2HH2 = HaLa(7,iPA)
+c                  E3HH2 = HaLa(8,iPA)
+c                  E4HH2 = HaLa(9,iPA)
+c               ENDIF
+ 23            CONTINUE
+            ENDIF
+           ENDIF
+ 20      CONTINUE
+
+*  Vul de gevonden associaties van vdhits in
+          nrasH1 = 0
+          nrasH2 = 0
+          DO 25   i = 1 , nrevd
+            hemi = revd(5,i)
+            IF (hemi .EQ. 1) THEN
+              nrasH1 = nrasH1 + 1
+              IF (nrasH1 .LE . 6 )  THEN
+                xP1VdH1(nrasH1) = revd(1,i)
+                yP1VdH1(nrasH1) = revd(2,i)
+                RP1VdH1(nrasH1) = revd(3,i)
+                PhiVdH1(nrasH1) = revd(4,i)
+              ENDIF
+            ELSEIF (hemi .EQ. 2) THEN
+              nrasH2 = nrasH2 + 1
+              IF (nrasH2 .LE . 6 )  THEN
+                xP1VdH2(nrasH2) = revd(1,i)
+                yP1VdH2(nrasH2) = revd(2,i)
+                RP1VdH2(nrasH2) = revd(3,i)
+                PhiVdH2(nrasH2) = revd(4,i)
+              ENDIF
+            ENDIF
+ 25      CONTINUE
+
+
+         RETURN
+         END
+  
+     
+
+*
+*
+*
++DECK,TPFINI.
+*CMZ :          08/05/94  04.40.36  by  D. M. Edsall
+*-- Author :    D. M. Edsall   27/04/94
+************************************************************
+*                                                          *
+* TPFINI                                                   *
+*                                                          *
+* a TAUMINATOR DST Analysis routine                        *
+*                                                          *
+* Author: D. M. Edsall                                     *
+*                                                          *
+* Created: 27/04/94                                        *
+*                                                          *
+*                                                          *
+* Purpose: close and clean at the end of processing.       *
+*          Print statitistics                              *
+*                                                          *
+*                                                          *
+* Input:                                                   *
+*                                                          *
+* Output:                                                  *
+*                                                          *
+************************************************************
+C
+C
+      SUBROUTINE TPFINI
+C
+C
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TMCUTS.
++CDE,TMSDES.
+C
+C
+C   Print statitistics on this processing
+C
+      LUNSTA = 37
+C
+C   List cuts
+C
+ccc      CALL TPWSTA(LUNSTA,CTITLE,NECUTS,CDESC,CTYPES,REVTCT,IEVTCT)
+C
+C   Events which passed cuts
+C
+      CALL TPWSTA(LUNSTA,ETITLE,NECUTS,EDESC,ETYPES,REVTCT,NEVPAS)
+C
+C   Write own created statistics
+C
+      CALL TMWSTA(LUNSTA)
+
+C   Write last HBOOK buffer and close HBOOK file
+C
+      CALL TMHEND
+C
+C
+      RETURN
+*
+
+      END
+
++DECK,TMWSTA .
+************************************************************
+*                                                          *
+* TMWSTA                                                   *
+*                                                          *
+* Purpose: Print out own created statistics                *
+*                                                          *
+************************************************************
+C
+C
+      SUBROUTINE TMWSTA(LUNSTA)
+C
+C
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TPIOUN.
++CDE,TMEINF.
++CDE,TMCUTS.
++CDE,TMSDES.
+C
+C   Local declarations
+C
+       REAL PROC(5), ERR(5), PROTEL(10),ERRTEL(10)
+
+C   Write own created statistics
+C
+      CALL VZERO(PROC , 5) 
+      CALL VZERO(ERR  , 5)
+      CALL VZERO(PROTEL , 10)
+      CALL VZERO(ERRTEL , 10)
+      IF (NREVT(1).NE.0) THEN
+         RNREVT = FLOAT( NREVT(1) )
+         DO 10, i=2,5
+           RNREVTi= FLOAT ( NREVT(i))   
+           PROC(i)= RNREVTi * 100. /  RNREVT
+           ERR(i) =( (RNREVTi*(1-RNREVTi/RNREVT) )**0.5 )*100./RNREVT
+ 10      CONTINUE
+         DO 20,i=1,10
+           RITELi = FLOAT( ITEL(i) )
+           PROTEL(i)= RITELi * 100./ RNREVT
+           ERRTEL(i)=( (RITELi*(1-RITELi/RNREVT) )**0.5 )*100./RNREVT
+ 20      CONTINUE 
+      ENDIF
+*
+      WRITE(LUNSTA,1001)NREVT(1)                  ! nr events analysed
+      WRITE(LUNSTA,1002)NREVT(4),PROC(4),ERR(4)   ! nr of taus
+      WRITE(LUNSTA,1003)NREVT(5),PROC(5),ERR(5)   ! nr of leptons
+C
+      WRITE(LUNSTA,1004)NREVT(2),PROC(2),ERR(2)
+      WRITE(LUNSTA,1005)NREVT(3),PROC(3),ERR(3)
+      WRITE(LUNSTA,1010)ITEL(1),PROTEL(1),ERRTEL(1)
+      WRITE(LUNSTA,1011)ITEL(2),PROTEL(2),ERRTEL(2)
+      WRITE(LUNSTA,1012)ITEL(3),PROTEL(3),ERRTEL(3)
+      WRITE(LUNSTA,1013)ITEL(4),PROTEL(4),ERRTEL(4)
+      WRITE(LUNSTA,1014)ITEL(5),PROTEL(5),ERRTEL(5)
+      WRITE(LUNSTA,1015)ITEL(6),PROTEL(6),ERRTEL(6)
+      WRITE(LUNSTA,1016)ITEL(7),PROTEL(7),ERRTEL(7)
+      WRITE(LUNSTA,1017)ITEL(8),PROTEL(8),ERRTEL(8)
+      WRITE(LUNSTA,1018)ITEL(9),PROTEL(9),ERRTEL(9)
+      WRITE(LUNSTA,1019)ITEL(10),PROTEL(10),ERRTEL(10)
+C
+      WRITE(LUNSTA,1100) 
+      WRITE(LUNSTA,1101) (iteltop(1,1,i),i=1,10)
+      WRITE(LUNSTA,1102) (iteltop(2,1,i),i=1,8)
+      WRITE(LUNSTA,1103) (iteltop(3,1,i),i=1,8)
+      WRITE(LUNSTA,1104) (iteltop(4,1,i),i=1,8)
+      WRITE(LUNSTA,1105) (iteltop(5,1,i),i=1,8)
+      WRITE(LUNSTA,1106) (iteltop(6,1,i),i=1,8)
+      WRITE(LUNSTA,1107) (iteltop(7,1,i),i=1,8)
+      WRITE(LUNSTA,1108) (iteltop(8,1,i),i=1,8)
+      WRITE(LUNSTA,1109) (iteltop(2,2,i),i=1,8)
+      WRITE(LUNSTA,1110) (iteltop(3,2,i),i=1,8)
+      WRITE(LUNSTA,1111) (iteltop(4,2,i),i=1,8)
+      WRITE(LUNSTA,1112) (iteltop(5,2,i),i=1,8)
+      WRITE(LUNSTA,1113) (iteltop(6,2,i),i=1,8)
+      WRITE(LUNSTA,1114) (iteltop(7,2,i),i=1,8)
+      WRITE(LUNSTA,1115) (iteltop(8,2,i),i=1,8)
+      WRITE(LUNSTA,1116) (iteltop(3,3,i),i=1,8)
+      WRITE(LUNSTA,1117) (iteltop(4,3,i),i=1,8)
+      WRITE(LUNSTA,1118) (iteltop(5,3,i),i=1,8)
+      WRITE(LUNSTA,1119) (iteltop(6,3,i),i=1,8)
+      WRITE(LUNSTA,1120) (iteltop(7,3,i),i=1,8)
+      WRITE(LUNSTA,1121) (iteltop(8,3,i),i=1,8)
+      WRITE(LUNSTA,1122) (iteltop(4,4,i),i=1,8)
+      WRITE(LUNSTA,1123) (iteltop(5,4,i),i=1,8)
+      WRITE(LUNSTA,1124) (iteltop(6,4,i),i=1,8)
+      WRITE(LUNSTA,1125) (iteltop(7,4,i),i=1,8)
+      WRITE(LUNSTA,1126) (iteltop(8,4,i),i=1,8)
+      WRITE(LUNSTA,1127) (iteltop(5,5,i),i=1,8)
+      WRITE(LUNSTA,1128) (iteltop(6,5,i),i=1,8)
+      WRITE(LUNSTA,1129) (iteltop(7,5,i),i=1,8)
+      WRITE(LUNSTA,1130) (iteltop(8,5,i),i=1,8)
+      WRITE(LUNSTA,1131) (iteltop(6,6,i),i=1,8)
+      WRITE(LUNSTA,1132) (iteltop(7,6,i),i=1,8)
+      WRITE(LUNSTA,1133) (iteltop(8,6,i),i=1,8)
+      WRITE(LUNSTA,1134) (iteltop(7,7,i),i=1,8)
+      WRITE(LUNSTA,1135) (iteltop(8,7,i),i=1,8)
+      WRITE(LUNSTA,1136) (iteltop(8,8,i),i=1,8)
+
+ 
+          IF( ISSIM )  THEN   
+
+      WRITE(LUNSTA,1200)
+
+      WRITE(LUNSTA,1201) NrAllMc(1,1),NrLeptMc(1,1),NrTopMc(1,1)
+     & , NrAll(1,1),NrLept(1,1) ,NrTop(1,1)
+      WRITE(LUNSTA,1202) NrAllMc(2,1),NrLeptMc(2,1),NrTopMc(2,1)
+     & ,NrAll(2,1),NrLept(2,1), NrTop(2,1)
+      WRITE(LUNSTA,1203) NrAllMc(3,1),NrLeptMc(3,1),NrTopMc(3,1)
+     & , NrAll(3,1),NrLept(3,1) ,NrTop(3,1)
+      WRITE(LUNSTA,1204) NrAllMc(4,1),NrLeptMc(4,1),NrTopMc(4,1)
+     & , NrAll(4,1),NrLept(4,1), NrTop(4,1)
+      WRITE(LUNSTA,1205) NrAllMc(5,1),NrLeptMc(5,1),NrTopMc(5,1)
+     & , NrAll(5,1),NrLept(5,1), NrTop(5,1)
+      WRITE(LUNSTA,1206) NrAllMc(6,1),NrLeptMc(6,1),NrTopMc(6,1)
+     & , NrAll(6,1),NrLept(6,1), NrTop(6,1)
+      WRITE(LUNSTA,1207) NrAllMc(7,1),NrLeptMc(7,1),NrTopMc(7,1)
+     & , NrAll(7,1),NrLept(7,1), NrTop(7,1)
+      WRITE(LUNSTA,1208) NrAllMc(8,1),NrLeptMc(8,1),NrTopMc(8,1)
+     & , NrAll(8,1),NrLept(8,1), NrTop(8,1)
+      WRITE(LUNSTA,1209) NrAllMc(2,2),NrLeptMc(2,2),NrTopMc(2,2)
+     & , NrAll(2,2),NrLept(2,2), NrTop(2,2)
+      WRITE(LUNSTA,1210) NrAllMc(3,2),NrLeptMc(3,2),NrTopMc(3,2)
+     & , NrAll(3,2),NrLept(3,2), NrTop(3,2)
+      WRITE(LUNSTA,1211) NrAllMc(4,2),NrLeptMc(4,2),NrTopMc(4,2)
+     & , NrAll(4,2),NrLept(4,2), NrTop(4,2)
+      WRITE(LUNSTA,1212) NrAllMc(5,2),NrLeptMc(5,2),NrTopMc(5,2)
+     & , NrAll(5,2),NrLept(5,2), NrTop(5,2)
+      WRITE(LUNSTA,1213) NrAllMc(6,2),NrLeptMc(6,2),NrTopMc(6,2)
+     & , NrAll(6,2),NrLept(6,2), NrTop(6,2)
+      WRITE(LUNSTA,1214) NrAllMc(7,2),NrLeptMc(7,2),NrTopMc(7,2)
+     & , NrAll(7,2),NrLept(7,2), NrTop(7,2)
+      WRITE(LUNSTA,1215) NrAllMc(8,2),NrLeptMc(8,2),NrTopMc(8,2)
+     & , NrAll(8,2),NrLept(8,2), NrTop(8,2)
+      WRITE(LUNSTA,1216) NrAllMc(3,3),NrLeptMc(3,3),NrTopMc(3,3)
+     & , NrAll(3,3),NrLept(3,3), NrTop(3,3)
+      WRITE(LUNSTA,1217) NrAllMc(4,3),NrLeptMc(4,3),NrTopMc(4,3)
+     & , NrAll(4,3),NrLept(4,3), NrTop(4,3)
+      WRITE(LUNSTA,1218) NrAllMc(5,3),NrLeptMc(5,3),NrTopMc(5,3)
+     & , NrAll(5,3),NrLept(5,3), NrTop(5,3)
+      WRITE(LUNSTA,1219) NrAllMc(6,3),NrLeptMc(6,3),NrTopMc(6,3)
+     & , NrAll(6,3),NrLept(6,3), NrTop(6,3)
+      WRITE(LUNSTA,1220) NrAllMc(7,3),NrLeptMc(7,3),NrTopMc(7,3)
+     & , NrAll(7,3),NrLept(7,3), NrTop(7,3)
+      WRITE(LUNSTA,1221) NrAllMc(8,3),NrLeptMc(8,3),NrTopMc(8,3)
+     & , NrAll(8,3),NrLept(8,3), NrTop(8,3)
+      WRITE(LUNSTA,1222) NrAllMc(4,4),NrLeptMc(4,4),NrTopMc(4,4)
+     & , NrAll(4,4),NrLept(4,4), NrTop(4,4)
+      WRITE(LUNSTA,1223) NrAllMc(5,4),NrLeptMc(5,4),NrTopMc(5,4)
+     & , NrAll(5,4),NrLept(5,4), NrTop(5,4)
+      WRITE(LUNSTA,1224) NrAllMc(6,4),NrLeptMc(6,4),NrTopMc(6,4)
+     & , NrAll(6,4),NrLept(6,4), NrTop(6,4)
+      WRITE(LUNSTA,1225) NrAllMc(7,4),NrLeptMc(7,4),NrTopMc(7,4)
+     & , NrAll(7,4),NrLept(7,4), NrTop(7,4)
+      WRITE(LUNSTA,1226) NrAllMc(8,4),NrLeptMc(8,4),NrTopMc(8,4)
+     & , NrAll(8,4),NrLept(8,4), NrTop(8,4)
+      WRITE(LUNSTA,1227) NrAllMc(5,5),NrLeptMc(5,5),NrTopMc(5,5)
+     & , NrAll(5,5),NrLept(5,5), NrTop(5,5)
+      WRITE(LUNSTA,1228) NrAllMc(6,5),NrLeptMc(6,5),NrTopMc(6,5)
+     & , NrAll(6,5),NrLept(6,5), NrTop(6,5)
+      WRITE(LUNSTA,1229) NrAllMc(7,5),NrLeptMc(7,5),NrTopMc(7,5)
+     & , NrAll(7,5),NrLept(7,5), NrTop(7,5)
+      WRITE(LUNSTA,1230) NrAllMc(8,5),NrLeptMc(8,5),NrTopMc(8,5)
+     & , NrAll(8,5),NrLept(8,5), NrTop(8,5)
+      WRITE(LUNSTA,1231) NrAllMc(6,6),NrLeptMc(6,6),NrTopMc(6,6)
+     & , NrAll(6,6),NrLept(6,6), NrTop(6,6)
+      WRITE(LUNSTA,1232) NrAllMc(7,6),NrLeptMc(7,6),NrTopMc(7,6)
+     & , NrAll(7,6),NrLept(7,6), NrTop(7,6)
+      WRITE(LUNSTA,1233) NrAllMc(8,6),NrLeptMc(8,6),NrTopMc(8,6)
+     & , NrAll(8,6),NrLept(8,6), NrTop(8,6)
+      WRITE(LUNSTA,1234) NrAllMc(7,7),NrLeptMc(7,7),NrTopMc(7,7)
+     & , NrAll(7,7),NrLept(7,7), NrTop(7,7)
+      WRITE(LUNSTA,1235) NrAllMc(8,7),NrLeptMc(8,7),NrTopMc(8,7)
+     & , NrAll(8,7),NrLept(8,7), NrTop(8,7)
+      WRITE(LUNSTA,1236) NrAllMc(8,8),NrLeptMc(8,8),NrTopMc(8,8)
+     & , NrAll(8,8),NrLept(8,8), NrTop(8,8)
+
+
+      WRITE(LUNSTA,1300)
+      WRITE(LUNSTA,1301) (ITDEC(1,i),i=1,10)
+      WRITE(LUNSTA,1302) (ITDEC(2,i),i=1,10)
+      WRITE(LUNSTA,1303) (ITDEC(3,i),i=1,10)
+      WRITE(LUNSTA,1304) (ITDEC(4,i),i=1,10)
+      WRITE(LUNSTA,1305) (ITDEC(5,i),i=1,10)
+      WRITE(LUNSTA,1329) (ITDEC(29,i),i=1,10)
+      WRITE(LUNSTA,1306) (ITDEC(6,i),i=1,10)
+      WRITE(LUNSTA,1307) (ITDEC(7,i),i=1,10)
+      WRITE(LUNSTA,1308) (ITDEC(8,i),i=1,10)
+      WRITE(LUNSTA,1309) (ITDEC(9,i),i=1,10)
+      WRITE(LUNSTA,1310) (ITDEC(10,i),i=1,10)
+      WRITE(LUNSTA,1311) (ITDEC(11,i),i=1,10)
+      WRITE(LUNSTA,1312) (ITDEC(12,i),i=1,10)
+      WRITE(LUNSTA,1313) (ITDEC(13,i),i=1,10)
+      WRITE(LUNSTA,1314) (ITDEC(14,i),i=1,10)
+      WRITE(LUNSTA,1315) (ITDEC(15,i),i=1,10)
+      WRITE(LUNSTA,1316) (ITDEC(16,i),i=1,10)
+      WRITE(LUNSTA,1317) (ITDEC(17,i),i=1,10)
+      WRITE(LUNSTA,1318) (ITDEC(18,i),i=1,10)
+      WRITE(LUNSTA,1319) (ITDEC(19,i),i=1,10)
+      WRITE(LUNSTA,1320) (ITDEC(20,i),i=1,10)
+      WRITE(LUNSTA,1321) (ITDEC(21,i),i=1,10)
+      WRITE(LUNSTA,1322) (ITDEC(22,i),i=1,10)
+
+
+      WRITE(LUNSTA,1330)
+      WRITE(LUNSTA,1331) IGENDEC(1) ,ILEPDEC(1),ITAUDEC(1)
+      WRITE(LUNSTA,1332) IGENDEC(2) ,ILEPDEC(2),ITAUDEC(2)
+      WRITE(LUNSTA,1333) IGENDEC(3) ,ILEPDEC(3),ITAUDEC(3)
+      WRITE(LUNSTA,1334) IGENDEC(4) ,ILEPDEC(4),ITAUDEC(4)
+      WRITE(LUNSTA,1335) IGENDEC(5) ,ILEPDEC(5),ITAUDEC(5)
+      WRITE(LUNSTA,1359) IGENDEC(29),ILEPDEC(29),ITAUDEC(29)
+      WRITE(LUNSTA,1336) IGENDEC(6) ,ILEPDEC(6),ITAUDEC(6)
+      WRITE(LUNSTA,1337) IGENDEC(7) ,ILEPDEC(7),ITAUDEC(7)
+      WRITE(LUNSTA,1338) IGENDEC(8) ,ILEPDEC(8),ITAUDEC(8)
+      WRITE(LUNSTA,1339) IGENDEC(9) ,ILEPDEC(9),ITAUDEC(9)
+      WRITE(LUNSTA,1340) IGENDEC(10),ILEPDEC(10),ITAUDEC(10)
+      WRITE(LUNSTA,1341) IGENDEC(11),ILEPDEC(11),ITAUDEC(11)
+      WRITE(LUNSTA,1342) IGENDEC(12),ILEPDEC(12),ITAUDEC(12)
+      WRITE(LUNSTA,1343) IGENDEC(13),ILEPDEC(13),ITAUDEC(13)
+      WRITE(LUNSTA,1344) IGENDEC(14),ILEPDEC(14),ITAUDEC(14)
+      WRITE(LUNSTA,1345) IGENDEC(15),ILEPDEC(15),ITAUDEC(15)
+      WRITE(LUNSTA,1346) IGENDEC(16),ILEPDEC(16),ITAUDEC(16)
+      WRITE(LUNSTA,1347) IGENDEC(17),ILEPDEC(17),ITAUDEC(17)
+      WRITE(LUNSTA,1348) IGENDEC(18),ILEPDEC(18),ITAUDEC(18)
+      WRITE(LUNSTA,1349) IGENDEC(19),ILEPDEC(19),ITAUDEC(19)
+      WRITE(LUNSTA,1350) IGENDEC(20),ILEPDEC(20),ITAUDEC(20)
+      WRITE(LUNSTA,1351) IGENDEC(21),ILEPDEC(21),ITAUDEC(21)
+      WRITE(LUNSTA,1352) IGENDEC(22),ILEPDEC(22),ITAUDEC(22)
+
+          ELSE
+
+      WRITE(LUNSTA,1400)
+      WRITE(LUNSTA,1401) NrAll(1,1),NrLept(1,1),NrTop(1,1)
+      WRITE(LUNSTA,1402) NrAll(2,1),NrLept(2,1),NrTop(2,1)
+      WRITE(LUNSTA,1403) NrAll(3,1),NrLept(3,1),NrTop(3,1)
+      WRITE(LUNSTA,1404) NrAll(4,1),NrLept(4,1),NrTop(4,1)
+      WRITE(LUNSTA,1405) NrAll(5,1),NrLept(5,1),NrTop(5,1)
+      WRITE(LUNSTA,1406) NrAll(6,1),NrLept(6,1),NrTop(6,1)
+      WRITE(LUNSTA,1407) NrAll(7,1),NrLept(7,1),NrTop(7,1)
+      WRITE(LUNSTA,1408) NrAll(8,1),NrLept(8,1),NrTop(8,1)
+      WRITE(LUNSTA,1409) NrAll(2,2),NrLept(2,2),NrTop(2,2)
+      WRITE(LUNSTA,1410) NrAll(3,2),NrLept(3,2),NrTop(3,2)
+      WRITE(LUNSTA,1411) NrAll(4,2),NrLept(4,2),NrTop(4,2)
+      WRITE(LUNSTA,1412) NrAll(5,2),NrLept(5,2),NrTop(5,2)
+      WRITE(LUNSTA,1413) NrAll(6,2),NrLept(6,2),NrTop(6,2)
+      WRITE(LUNSTA,1414) NrAll(7,2),NrLept(7,2),NrTop(7,2)
+      WRITE(LUNSTA,1415) NrAll(8,2),NrLept(8,2),NrTop(8,2)
+      WRITE(LUNSTA,1416) NrAll(3,3),NrLept(3,3),NrTop(3,3)
+      WRITE(LUNSTA,1417) NrAll(4,3),NrLept(4,3),NrTop(4,3)
+      WRITE(LUNSTA,1418) NrAll(5,3),NrLept(5,3),NrTop(5,3)
+      WRITE(LUNSTA,1419) NrAll(6,3),NrLept(6,3),NrTop(6,3)
+      WRITE(LUNSTA,1420) NrAll(7,3),NrLept(7,3),NrTop(7,3)
+      WRITE(LUNSTA,1421) NrAll(8,3),NrLept(8,3),NrTop(8,3)
+      WRITE(LUNSTA,1422) NrAll(4,4),NrLept(4,4),NrTop(4,4)
+      WRITE(LUNSTA,1423) NrAll(5,4),NrLept(5,4),NrTop(5,4)
+      WRITE(LUNSTA,1424) NrAll(6,4),NrLept(6,4),NrTop(6,4)
+      WRITE(LUNSTA,1425) NrAll(7,4),NrLept(7,4),NrTop(7,4)
+      WRITE(LUNSTA,1426) NrAll(8,4),NrLept(8,4),NrTop(8,4)
+      WRITE(LUNSTA,1427) NrAll(5,5),NrLept(5,5),NrTop(5,5)
+      WRITE(LUNSTA,1428) NrAll(6,5),NrLept(6,5),NrTop(6,5)
+      WRITE(LUNSTA,1429) NrAll(7,5),NrLept(7,5),NrTop(7,5)
+      WRITE(LUNSTA,1430) NrAll(8,5),NrLept(8,5),NrTop(8,5)
+      WRITE(LUNSTA,1431) NrAll(6,6),NrLept(6,6),NrTop(6,6)
+      WRITE(LUNSTA,1432) NrAll(7,6),NrLept(7,6),NrTop(7,6)
+      WRITE(LUNSTA,1432) NrAll(8,6),NrLept(8,6),NrTop(8,6)
+      WRITE(LUNSTA,1433) NrAll(7,7),NrLept(7,7),NrTop(7,7)
+      WRITE(LUNSTA,1434) NrAll(8,7),NrLept(8,7),NrTop(8,7)
+      WRITE(LUNSTA,1435) NrAll(8,7),NrLept(8,8),NrTop(8,7)
+      WRITE(LUNSTA,1436) NrAll(8,8),NrLept(8,8),NrTop(8,8)
+
+          ENDIF
+
+      RETURN
+*
+ 1001 FORMAT(//' NUMBER OF EVENTS analysed           ',I6/)
+ 1002 FORMAT(' NR OF EVENTS SATISFYING TAUTAU CUTS '
+     &            ,I6,F10.1,'% +-',F2.1,'%'/)
+ 1003 FORMAT(' NR OF EVENTS SATISFYING LEPTON CUTS '
+     &            ,I6,F10.1,'% +-',F2.1,'%'//)
+*
+ 1004 FORMAT(' more then 0 tracks   ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1005 FORMAT(' 1 good tr. per hemi. ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1010 FORMAT(' prongs               ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1011 FORMAT(' good tracks          ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1012 FORMAT(' barrel               ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1013 FORMAT(' distance to BS       ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1014 FORMAT(' isolation angel      ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1015 FORMAT(' visible energy       ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1016 FORMAT(' radial momentum      ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1017 FORMAT(' radial energy        ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1018 FORMAT('      1-1 prongs left     ',I6,F10.1,'% +-',F2.1,'%'/)
+ 1019 FORMAT(' acol. miss pt,diff z ',I6,F10.1,'% +-',F2.1,'%'//)
+
+ 1100 FORMAT(//'  topol \  #pr.| #tr. | Barel|ImpPar| iso  | Evis | Prad 
+     & | Erad | 1-1  | T1-1 |'/
+     &         '--------------------------------------------------------
+     &-----------------------' )
+ 1101  FORMAT( '  1-1 |', 10I7)
+ 1102  FORMAT( '  1-2 |', 8I7)
+ 1103  FORMAT( '  1-3 |', 8I7)
+ 1104  FORMAT( '  1-4 |', 8I7)
+ 1105  FORMAT( '  1-5 |', 8I7)
+ 1106  FORMAT( '  1-6 |', 8I7)
+ 1107  FORMAT( '  1-7 |', 8I7)
+ 1108  FORMAT( '  1->7|', 8I7/)
+ 1109  FORMAT( '  2-2 |', 8I7)
+ 1110  FORMAT( '  2-3 |', 8I7)
+ 1111  FORMAT( '  2-4 |', 8I7)
+ 1112  FORMAT( '  2-5 |', 8I7)
+ 1113  FORMAT( '  2-6 |', 8I7)
+ 1114  FORMAT( '  2-7 |', 8I7)
+ 1115  FORMAT( '  2->7|', 8I7/)
+ 1116  FORMAT( '  3-3 |', 8I7)
+ 1117  FORMAT( '  3-4 |', 8I7)
+ 1118  FORMAT( '  3-5 |', 8I7)
+ 1119  FORMAT( '  3-6 |', 8I7)
+ 1120  FORMAT( '  3-7 |', 8I7)
+ 1121  FORMAT( '  3->7|', 8I7/)
+ 1122  FORMAT( '  4-4 |', 8I7)
+ 1123  FORMAT( '  4-5 |', 8I7)
+ 1124  FORMAT( '  4-6 |', 8I7)
+ 1125  FORMAT( '  4-7 |', 8I7)
+ 1126  FORMAT( '  4->7|', 8I7/)
+ 1127  FORMAT( '  5-5 |', 8I7)
+ 1128  FORMAT( '  5-6 |', 8I7)
+ 1129  FORMAT( '  5-7 |', 8I7)
+ 1130  FORMAT( '  5->7|', 8I7/)
+ 1131  FORMAT( '  6-6 |', 8I7)
+ 1132  FORMAT( '  6-7 |', 8I7)
+ 1133  FORMAT( '  6->7|', 8I7/)
+ 1134  FORMAT( '  7-7 |', 8I7)
+ 1135  FORMAT( '  7->7|', 8I7/)
+ 1136  FORMAT( ' >7->7|', 8I7//)
+
+
+ 1200 FORMAT(//'G-topol\MC gen|MC Lsel|MC Tsel| R gen |R Lsel|R Tsel|'/
+     &         '-----------------------------------------------------')
+ 1201  FORMAT( '  1-1 |', 6I8)
+ 1202  FORMAT( '  1-2 |', 6I8)
+ 1203  FORMAT( '  1-3 |', 6I8)
+ 1204  FORMAT( '  1-4 |', 6I8)
+ 1205  FORMAT( '  1-5 |', 6I8)
+ 1206  FORMAT( '  1-6 |', 6I8)
+ 1207  FORMAT( '  1-7 |', 6I8)
+ 1208  FORMAT( '  1->7|', 6I8/)
+ 1209  FORMAT( '  2-2 |', 6I8)
+ 1210  FORMAT( '  2-3 |', 6I8)
+ 1211  FORMAT( '  2-4 |', 6I8)
+ 1212  FORMAT( '  2-5 |', 6I8)
+ 1213  FORMAT( '  2-6 |', 6I8)
+ 1214  FORMAT( '  2-7 |', 6I8)
+ 1215  FORMAT( '  2->7|', 6I8/)
+ 1216  FORMAT( '  3-3 |', 6I8)
+ 1217  FORMAT( '  3-4 |', 6I8)
+ 1218  FORMAT( '  3-5 |', 6I8)
+ 1219  FORMAT( '  3-6 |', 6I8)
+ 1220  FORMAT( '  3-7 |', 6I8)
+ 1221  FORMAT( '  3->7|', 6I8/)
+ 1222  FORMAT( '  4-4 |', 6I8)
+ 1223  FORMAT( '  4-5 |', 6I8)
+ 1224  FORMAT( '  4-6 |', 6I8)
+ 1225  FORMAT( '  4-7 |', 6I8)
+ 1226  FORMAT( '  4->7|', 6I8/)
+ 1227  FORMAT( '  5-5 |', 6I8)
+ 1228  FORMAT( '  5-6 |', 6I8)
+ 1229  FORMAT( '  5-7 |', 6I8)
+ 1230  FORMAT( '  5->7|', 6I8/)
+ 1231  FORMAT( '  6-6 |', 6I8)
+ 1232  FORMAT( '  6-7 |', 6I8)
+ 1233  FORMAT( '  6->7|', 6I8/)
+ 1234  FORMAT( '  7-7 |', 6I8)
+ 1235  FORMAT( '  7->7|', 6I8/)
+ 1236  FORMAT( ' >7->7|', 6I8//)
+
+
+ 1300 FORMAT(//'  dec mod.  \ #pr.| #tr.|Barel|ImpP.| iso | Evis|Prad |
+     &Erad | 1-1 |T1-1 |'/
+     &         '--------------------------------------------------------
+     &----------------' )
+ 1301  FORMAT( ' e        |', 10I6)
+ 1302  FORMAT( ' mu       |', 10I6)
+ 1303  FORMAT( ' Pi       |', 10I6)
+ 1304  FORMAT( ' Rho      |', 10I6)
+ 1305  FORMAT( ' A1->1cha |', 10I6)
+ 1329  FORMAT( ' A1->3cha |', 10I6)
+ 1306  FORMAT( ' K        |', 10I6)
+ 1307  FORMAT( ' K*       |', 10I6)
+ 1308  FORMAT( ' 3Pi  Pi0 |', 10I6)
+ 1309  FORMAT( ' Pi  3Pi0 |', 10I6)
+ 1310  FORMAT( ' 3Pi 2Pi0 |', 10I6)
+ 1311  FORMAT( ' 5Pi      |', 10I6)
+ 1312  FORMAT( ' 5Pi  Pi0 |', 10I6)
+ 1313  FORMAT( ' 5Pi 3Pi0 |', 10I6)
+ 1314  FORMAT( ' 2K  Pi   |', 10I6)
+ 1315  FORMAT( ' Pi 2K0   |', 10I6)
+ 1316  FORMAT( ' K K0 Pi0 |', 10I6)
+ 1317  FORMAT( ' K 2Pi0   |', 10I6)
+ 1318  FORMAT( ' K 2Pi    |', 10I6)
+ 1319  FORMAT( 'K0  Pi Pi0|', 10I6) 
+ 1320  FORMAT( 'Eta Pi Pi0|', 10I6)
+ 1321  FORMAT( 'Gam.Pi Pi0|', 10I6)
+ 1322  FORMAT( ' K K0     |', 10I6)
+
+ 1330 FORMAT(/ ' dec mod.  \  gen.  |  Lept  |  Tau    |'/
+     &         '----------------------------------------')
+ 1331  FORMAT( ' e        |', 3I9)
+ 1332  FORMAT( ' mu       |', 3I9)
+ 1333  FORMAT( ' Pi       |', 3I9)
+ 1334  FORMAT( ' Rho      |', 3I9)
+ 1335  FORMAT( ' A1->1cha |', 3I9)
+ 1359  FORMAT( ' A1->3cha |', 3I9)
+ 1336  FORMAT( ' K        |', 3I9)
+ 1337  FORMAT( ' K*       |', 3I9)
+ 1338  FORMAT( ' 3Pi  Pi0 |', 3I9)
+ 1339  FORMAT( ' Pi  3Pi0 |', 3I9)
+ 1340  FORMAT( ' 3Pi 2Pi0 |', 3I9)
+ 1341  FORMAT( ' 5Pi      |', 3I9)
+ 1342  FORMAT( ' 5Pi  Pi0 |', 3I9)
+ 1343  FORMAT( ' 5Pi 3Pi0 |', 3I9)
+ 1344  FORMAT( ' 2K  Pi   |', 3I9)
+ 1345  FORMAT( ' Pi 2K0   |', 3I9)
+ 1346  FORMAT( ' K K0 Pi0 |', 3I9)
+ 1347  FORMAT( ' K 2Pi0   |', 3I9)
+ 1348  FORMAT( ' K 2Pi    |', 3I9)
+ 1349  FORMAT( 'K0  Pi Pi0|', 3I9) 
+ 1350  FORMAT( 'Eta Pi Pi0|', 3I9)
+ 1351  FORMAT( 'Gam.Pi Pi0|', 3I9)
+ 1352  FORMAT( ' K K0     |', 3I9)
+
+ 1400 FORMAT(/ 'R-topol\   anal. |  Lept  |  Tau    |'/
+     &         '------------------------------------')
+ 1401  FORMAT( '   1-1 |', 3I9)
+ 1402  FORMAT( '   1-2 |', 3I9)
+ 1403  FORMAT( '   1-3 |', 3I9)
+ 1404  FORMAT( '   1-4 |', 3I9)
+ 1405  FORMAT( '   1-5 |', 3I9)
+ 1406  FORMAT( '   1-6 |', 3I9)
+ 1407  FORMAT( '   1-7 |', 3I9)
+ 1408  FORMAT( '   1->7|', 3I9/)
+ 1409  FORMAT( '   2-2 |', 3I9)
+ 1410  FORMAT( '   2-3 |', 3I9)
+ 1411  FORMAT( '   2-4 |', 3I9)
+ 1412  FORMAT( '   2-5 |', 3I9)
+ 1413  FORMAT( '   2-6 |', 3I9)
+ 1414  FORMAT( '   2-7 |', 3I9)
+ 1415  FORMAT( '   2->7|', 3I9/)
+ 1416  FORMAT( '   3-3 |', 3I9)
+ 1417  FORMAT( '   3-4 |', 3I9)
+ 1418  FORMAT( '   3-5 |', 3I9)
+ 1419  FORMAT( '   3-6 |', 3I9)
+ 1420  FORMAT( '   3-7 |', 3I9)
+ 1421  FORMAT( '   3->7|', 3I9/)
+ 1422  FORMAT( '   4-4 |', 3I9)
+ 1423  FORMAT( '   4-5 |', 3I9)
+ 1424  FORMAT( '   4-6 |', 3I9)
+ 1425  FORMAT( '   4-7 |', 3I9)
+ 1426  FORMAT( '   4->7|', 3I9/)
+ 1427  FORMAT( '   5-5 |', 3I9)
+ 1428  FORMAT( '   5-6 |', 3I9)
+ 1429  FORMAT( '   5-7 |', 3I9)
+ 1430  FORMAT( '   5->7|', 3I9/)
+ 1431  FORMAT( '   6-6 |', 3I9)
+ 1432  FORMAT( '   6-7 |', 3I9)
+ 1433  FORMAT( '   6->7|', 3I9/)
+ 1434  FORMAT( '   7-7 |', 3I9)
+ 1435  FORMAT( '   7->7|', 3I9/)
+ 1436  FORMAT( '  >7->7|', 3I9/)
+
+                                                   
+      END
+*
++DECK,tmhend.
+************************************************************
+*                                                          *
+* TMHEND                                                   *
+*                                                          *
+* a TAUMINATOR DST Analysis routine                        *
+*                                                          *
+* Purpose:  write histograms and ntuples from buffer to    * 
+*   to file, terminate HBOOK sesion.                       *
+*                                                          *
+************************************************************
+C
+C
+      SUBROUTINE TMHEND
+C
+C   Global declarations
+C
++CDE,TPCDE.
++CDE,TPIOUN.
+C
+C   Local declarations
+C
+C
+C   Write out all histogram and ntuple information still in buffer
+C
+cSDB      CALL HCDIR('//TAUMIN',' ')
+cSDB      CALL HROUT(30,ICYCLE,' ')
+C
+C   Terminate interaction with HBOOK and close the HBOOK file
+C
+cSDB      CALL HREND('TAUMIN')
+cSDB      CLOSE(TPUPAW)
+C
+C
+c**** SDB
+
+* Write a user function to access the VUB ntuple
+         OPEN (4, FILE='readvub.f',  STATUS='UNKNOWN')
+         CALL HUWFUN(4,41,'readvub',0,'B')                                         
+
+         CALL HPRINT(0)
+c         CALL TPNTEN(100, 40)
+         CALL TPNTEN(99, 41)
+         CALL HREND('VUB.NTUP')
+         CLOSE(TPUPAW)
+      RETURN
+      END
+
+C***************************************************************
+C TEST !!!!!
++DECK,TMTOPO. ==========================================================
+*CMZ :          30/04/94  00.33.08  by  D. M. Edsall
+*-- Author :
+      SUBROUTINE  TMTOPO (NPAMAX,NPA,IHEM,IFILT,ENEUT,NTOPOL)
+************************************************************************
+*TMTOPO
+*
+*   Function: determines the event topology
+*
+*   Author: SDB
+*   Update: DME 26/04/94 ( made into a general purpose routine for the
+*                          TAUPLUS package )
+*
+************************************************************************
++CDE,UXCEVT.
+*
+      INTEGER IHEM(NPAMAX),IFILT(NPAMAX)
+      INTEGER NTOPOL(8)
+      REAL ENEUT(5,NPAMAX)
+*
+*
+*   Executables
+*
+
+      DO 10 IPA=1,NPA
+         IHM=IHEM(IPA)
+         IFI=IFILT(IPA)
+*
+*   Number of good tracks
+*
+         IF ( IFI .EQ. 1 ) NTOPOL(IHM*4-3)=NTOPOL(IHM*4-3)+1
+*
+*   Number of prongs ( good + bad tracks )
+*
+         IF((IFI.EQ.0).OR.(IFI.EQ.1)) 
+     &                     NTOPOL(IHM*4)=NTOPOL(IHM*4)+1
+*
+*   Number of neutrals
+*
+        IF ((IFI.NE.1).AND.(IFI.NE.0).AND.(IFI.NE.22))  THEN
+            IF ( ENEUT(5,IPA) .EQ. 13 )     THEN
+                NTOPOL(IHM*4-1)=NTOPOL(IHM*4-1)+1
+            ELSE
+                NTOPOL(IHM*4-2)=NTOPOL(IHM*4-2)+1
+            ENDIF
+        ELSEIF (IFI .EQ. 22) THEN
+            NTOPOL(IHM*4-2)=NTOPOL(IHM*4-2)+1
+            NTOPOL(IHM*4-1)=NTOPOL(IHM*4-1)+1
+        ENDIF
+   10 CONTINUE
+      RETURN
+      END
+C
+C
++DECK,TMBTRF. =======================================================
+*-- Author :
+      INTEGER FUNCTION TMBTRF(LUNDB,LPA,LTPS,LTPE,LTPH,ECHATR,ENEUTR)
+************************************************************************
+*TMBTRF
+*
+*    Function : associates good neutrals to bad tracks with neutral energy
+*               If a bad track is found to be a good neutral, the track is
+*               put into the array ENEUTR and erased from the array ECHATR
+*
+*    Author: SDB
+*
+************************************************************************
++CDE,UXCOM.
+*
+*   Arguments:
+*
+*      TMBTRF     = 2 for a bad ch.track representing a good EM.neutral
+*                 = 20 for a bad ch.track representing a good HAD.neutral
+*                 = 22 for a bad charged track which could be either a
+*                   good EM neutral or a good hadronic neutral
+*                 = 0 for a bad ch.track
+*
+*      LUNDB      = logical unit for debug output
+*
+*      LPA        = pointer to PA bank
+*
+*      LTPS       = pointer to STANDARD module on DST
+*                   ( =0 if no info is desired or present )
+*
+*      LTPE       = pointer to EMCA extra module on DST
+*                   ( =0 if no info is desired or present )
+*
+*      LTPH       = pointer to HCAL extra module on DST
+*                   ( =0 if no info is desired or present )
+*
+*      ECHATR(1)  = energy of the first E.M. shower
+*      ECHATR(2)  = x \
+*      ECHATR(3)  = y  |-> position of the first E.M. shower
+*      ECHATR(4)  = z /
+*      ECHATR(5)  = nr. of E.M. showers ass. to the track
+*      ECHATR(6)  = total electromagnetic energy ass. to the track
+*      ECHATR(7)  = energy of the first had. shower
+*      ECHATR(8)  = x \
+*      ECHATR(9)  = y  |-> position of the first had. shower
+*      ECHATR(10) = z /
+*      ECHATR(11) = nr. of had. showers ass. to the track
+*      ECHATR(12) = total hadronic energy ass. tot the track
+*
+*      ENEUTR(1)  = energy of the neutral ( sum of EM and HAD energy ass.
+*                                          to the bad charged track)
+*      ENEUTR(2)  = x\
+*      ENEUTR(3)  = y |-> position of the shower ( first shower only )
+*      ENEUTR(4)  = z/
+*      ENEUTR(5)  = nr. of the detector ( 9 = HPC, 13 = HAC/HAB ,
+*                                        23 = SAT , 26 = EMF )
+*
+*
+      REAL ECHATR(12),ENEUTR(5)
+*
+*   Executables
+*
+*
+*     electromagnetic energy associated to the track?
+*
+      TMBTRF=0
+      IF ( ECHATR(6) .NE. 0 ) THEN
+        TMBTRF=TMBTRF+2
+        ENEUTR(1) = ECHATR(6) 
+        ENEUTR(2) = ECHATR(2)
+        ENEUTR(3) = ECHATR(3)
+        ENEUTR(4) = ECHATR(4)
+        NDET = NINT(Q(LTPE+3))  ! detector module of the first shower.
+        ENEUTR(5) = FLOAT(NDET) 
+      ENDIF
+*
+*     hadronic energy associated to the track?
+*
+      IF ( ECHATR(12) .NE. 0 ) THEN
+        TMBTRF=TMBTRF+20
+        ENEUTR(1) = ENEUTR(1) + ECHATR(12)
+        ENEUTR(2) = ECHATR(8)
+        ENEUTR(3) = ECHATR(9)
+        ENEUTR(4) = ECHATR(10)
+        ENEUTR(5) = 13        
+      ENDIF
+
+         CALL VZERO(ECHATR,12)
+*
+*
+      RETURN
+      END
+*
+
++DECK,TMERAD_A. ===========================================
+      FUNCTION TMERAD_A(NPAMAX,ECHATR,LT)
+************************************************************************
+* TMERAD_A
+*    FUNCTION to calculate ERAD from the associated energies.
+*
+************************************************************************
+*
+      INTEGER  LT(2)
+      REAL ECHATR(12,NPAMAX)
+*
+*   Executables
+*
+        LT1=LT(1)
+        LT2=LT(2)
+        IF ( LT1*LT2 .GT. 0 ) THEN 
+         TMERAD_A = SQRT(ECHATR(6,lt(1))**2+ECHATR(6,lt(2))**2)
+        ELSEIF ( LT2 .GT. 0 ) THEN
+         TMERAD_A=ECHATR(6,LT1)
+        ELSEIF ( LT2 .GT. 0 ) THEN
+         TMERAD_A=ECHATR(6,LT2)
+        ENDIF 
+   
+      RETURN
+      END
+C
++DECK,TM_ELEC,IF=ELEPHANT. =============================================
+         SUBROUTINE TM_ELEC(iPA,LPAFOT,IELTAG,EHPCF,ELEC,MECODE,IRAD)
+************************************************************************
+*TM_ELEC
+*
+*    FUNCTION :  For Longdst :
+*        function which returns the information form the common block
+*         ELOUTP for ELECTRONS.
+*
+*             :  For normal DST :
+*        *retruns the code MECODE
+*        *returns the information form the common block
+*         ELOUTP for ELECTRONS.
+*
+*     !!! FOR RADIATIVE ELECTORNS, THE ENERGY FROM THE GAMMA IS ADDED 
+*         TO THE ENERGY OF THE TRACK !!!!!!!!!!!
+*    ARGUMENTS    
+*         IPA     = nr of the PA 
+*         LPAFOT(IFOT,-2:28) = pointers to the modules ass. to photons
+*                comming form radiative electrons/positrons.
+*         IELTAG  = electron tag code : 0=no e, 1=loos, 2=stand,3=thight.
+*         EHPCF   = fixed HPC energy + non-linearity corrections. 
+*         MECODE :(only for normal DST) sum bits 7 to 9 =
+*            sum= 3 : loos electron
+*            sum= 4 : standard electron
+*            sum= 5 : thight electron
+*                  : bits 10 to 12 =
+*            bit 10 : loos electron from gamma conv.
+*            bit 11 : standard elec. from gamma conv.
+*            bit 12 : thight elec.  from gamma conv.
+*         IRAD     = 1 if this is a radiative elec./pos.  
+*             Since 93C :
+*         ELEC(1) = best estimate for the electron energy at the vertex.
+*         ELEC(2) = Px refited electron momentum 
+*         ELEC(3) = Py refited electron momentum
+*         ELEC(4) = Pz refited electron momentum
+*         ELEC(5) = P refited electron momentum
+*         ELEC(6) = theta refited electron momentum
+*         ELEC(7) = phi refited electron momentum
+*         ELEC(8) = Phi position at the HPC Boarder from TRK-extrapolation.
+*         ELEC(9) = HPC crack flag : -1: outside HPC range 
+*                 0: inside HPC  ,  1: phi crack        
+*                 2: theta crack ,  3: phi and theta crack 
+*
+************************************************************************
++CDE,ELOUTP.
++CDE,TPCDE.
++CDE,UXCOM.
+C 
+C   DECLARATIONS :
+C   =============
+        REAL     ELEC(9) , EHPCF  ,pol(3)
+        INTEGER  IELTAG  , MECODE ,Irad
+        INTEGER  TPDSTV
+        INTEGER  LPAFOT(NPAMAX,-2:28)
+        LOGICAL  TPENDV  
+C 
+C   EXECUTABLES
+C   ===========
+C  Get information form ELECID .
+C 
+        IPAPA = LTPDQ(IPA,-1)
+        CALL ELMACO(IPAPA, IETAG ,IEVETO)
+C
+C--  For normal DST, fill the variable IECODE.
+C    ..............
+                 IF (LTPPID(1).EQ.0)  THEN
+c
+         MECODE = 0.
+         IF (IETAG.NE.0)   THEN
+            DO i=1,3
+               IF (JBIT(IETAG+2,i,1).EQ.1) 
+     +                MECODE = MECODE + 2**(i+5)
+            ENDDO              
+         ENDIF 
+         IF (IEVETO.NE.0) 
+     +                MECODE = MECODE + 2**(IVETO+8)
+c
+                   ENDIF
+
+C
+C-- for normal and long DST
+C   .......................
+C   Get the ELECID varibales form the common block ELOUTP
+C
+          IDSTV = TPDSTV()
+          IF (IDSTV .LT. 310)  THEN         ! Before 93C processing
+             CALL PXAC20(1)
+             CALL PXHECO(IPAPA,ELHPCF)
+             IELTAG   = IETAG
+             EHPCF    = ELHPCF
+          ELSE                              ! from 93C processing onwards 
+             IELTAG   = IETAG
+             EHPCF    = ELHPCF
+             ELEC(1)  = EELEC   
+             ELEC(2)  = ELPXF    
+             ELEC(3)  = ELPYF    
+             ELEC(4)  = ELPZF    
+             CALL VZERO(pol , 3)
+             IF (ELPXF.NE.0)   CALL CATOPO(ELEC(2),pol)
+             ELEC(5)  = pol(1)
+             ELEC(6)  = pol(2)
+             ELEC(7)  = pol(3)
+             ELEC(8)  = ELPHIR0  ! not for 92D !
+             ELEC(9)  = ELEFLG
+          ENDIF
+C
+C    Look for radiative electrons/positron.
+C     If an electron/positron is radiative, add the energy of the photon 
+C     to EHPCF of the electron/positron
+C
+          IRAD = 0
+          CALL PXGECO(IPAPA,IPXCODE)
+          IF ((IPXCODE.EQ.-30).or.(IPXCODE.EQ.-40)) THEN
+c           this is an electron/positron that radiated  
+            ifot = 0
+            if = 0
+            IF (TPENDV(iPAPA,IPVEND)) THEN
+  90          if = if + 1   
+                IF (IPVEND.EQ.LPAFOT(if,-2)) ifot = if 
+              IF ((ifot.EQ.0).AND.(if.LT.100)) GOTO 90 
+              IF (Ifot.EQ.0) GOTO 95
+c             get the energy of the standard module for this photon.
+              LSTAND = LPAFOT(if,0)
+              EPHOT = Q(LSTAND+5 )
+c             add the energy of the photon to the enery of the elec./pos.
+              EHPCF    = EHPCF + EPHOT
+              IRAD     = 1
+  95          CONTINUE           
+            ENDIF
+          ENDIF  
+
+          RETURN
+          END    
+*
+           SUBROUTINE CHECK_ZERO(A,N,OUT)
+
+            INTEGER N,I
+            REAL   A(N),out
+
+            out=0
+	    
+	    do i=1,n
+            if (A(i).gt.0) out = A(i) + out
+	    enddo
+
+
+
+            RETURN
+            END 
+                  
++DECK,TM_PHOT,IF=ELEPHANT. =============================================
+         SUBROUTINE TM_PHOT(iPAPA,MPCODE)
+************************************************************************
+*TM_PHOT
+*           For normal DST :
+*        1/retruns the code MPCODE
+*           MFCODE : sum bits 19 to 25 
+*            sum = -PXPHOT identification code.
+*
+************************************************************************
+c
+         CALL PXGECO(ipapa, IPXCODE )
+         MPCODE = 0.
+         IPXCODE = ABS(IPXCODE)
+         IF (IPXCODE.NE.0)   THEN
+            DO i=1,7
+               IF (JBIT(IPXCODE,i,1).EQ.1) 
+     +                MPCODE = MPCODE + 2**(i+17)
+            ENDDO              
+         ENDIF 
+C
+C TEST !! 
+         IF (IPXCODE.NE.0)   WRITE(51,*) IPXCODE, MPCODE
+C      
+          RETURN
+          END    
+

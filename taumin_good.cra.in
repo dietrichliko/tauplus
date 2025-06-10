@@ -1,0 +1,105 @@
++OPTION VERbose
++USE, $ENV{PLINAM}. 
+%%
++USE, HPUX, IF=Linux.
+%
++USE,ELEPHANT,T=EXE.   <-- Execute elephant
++USE,HISTO,T=INH.
++USE,TESTNTUP,T=INH.
++USE,VUBBNTUP,T=EXE.
+
++USE,HPUX.             <-- HARDWARE PLATFORM
++USE,TPUX,T=INH.       <-- SELECT NEW I/O AND DST TOOLS BASED ON UX
++USE,TPPHUX,T=INH.     <-- SELECT NEW I/O AND DST TOOLS BASED ON UX and PHDST
++USE,TPPH,T=EXE.       <-- SELECT NEW I/O AND DST TOOLS BASED ON PHDST
+
++USE,P=UXCDES,IF=-TPPH.                  UX CDE'S
++USE,P=PXCDECOR,IF=-TPPH.                STANDARD PXDST CDE  CORRECTIONS
++USE,P=PXCDES.                           CDES OF PXDST PACKAGE
++USE,P=PHDSTCDE,IF=TPPH.                 CDES OF PHDST PACKAGE
++USE,P=FMUCDE.                           CDE's for muon identification .
++USE,P=REFCDE.                           CDE's for muon fix.
+
++EXE.
++USE,*TAUP.                              US: compile tauplus package
++USE, P=TPIO, P=TPANA, P=TPNTUP, P=TPGEN, T=EXE.
++USE, P=TAUP, D=TPSTRT, TPUPIL, TPRUN, TPFINI, T=INH.
++USE, TMCDES.                             CDES OF TAUMINATOR PACKAGE
++USE, TMANA.                              THE TAUMINATOR PACKAGE
++USE, SHIFT_ROUT.
++EXE.
++SELF.
++SELF. ********************* SET ZEBRA SIZE ***********************
++SELF.************ DEFINE STORE & WORKING SPACE SIZE **************
++KEEP , UXSIZEQ .
+        INTEGER NSIZEQ, NSIZWS
+        PARAMETER (NSIZEQ=1000000,NSIZWS=300000)
++KEEP , UXSIZET .
+        PARAMETER ( NWTANS=300000 )
++KEEP , UXSIZEH .
+        PARAMETER ( NBOOKW = 1000000 )
++KEEP , UXBOOK .
++CDE , UXSIZEH .
+        COMMON /PAWC/ HSPACE(NBOOKW)
++SELF . ************************************************************
++ADD, P=TMANA, D=TMINLU, C=42.
+       IYEAR = 92 
++ADD, P=TMANA, D=TPUPIL, C=19.
+       CHARACTER*4 PHRTY
+       IF ( PHRTY() .NE. 'DST' ) THEN
+           NEED = 0
+           RETURN
+       ENDIF
++ADD,P=TAUP,D=TPUSER,C=69,IF=ELEPHANT.
+C
+C CAll ELEPHANT to unpack and do futher fixings on long/short DST
+C                to fix and do identifications on normal DST
+C     
+        CALL ELEPHANT
+C
++ADD,P=TMANA,D=TMSELPA,C=31.
+        ELEPH = .TRUE.  !<- use particles created by elephant or not.
++SELF.
+%
++KEEP, MYLQSH.
+      INTEGER LQSH
+      COMMON/MYLQSH/LQSH(NPAMAX)
++ADD, P=TAUP, D=TPUINI, L=23.
++CDE, MYLQSH.
++ADD, P=TAUP, D=TPUINI, L=32. 
+
+      CALL MZLINK(ITPSTO,'/MYLQSH/',LQSH,LQSH,LQSH(NPAMAX))
+
++ADD , P=TAUP, D=TPPIL, L=35.
++CDE, MYLQSH.
++ADD, P=TAUP, D=TPPIL, L=66.
+      CALL VZERO(LQSH, NPAMAX)
++ADD, P=TMANA, D=TPRUN, L=22.
++CDE, MYLQSH.
++REP, P=TMANA, D=TPRUN, L=9.
+      SUBROUTINE TPRUN(GOODEV)
++REP, P=TMANA, D=tPRUN, L=554.
+         CALL TPSTIN(LSH,NMCTMX,PTAU,PMCTRK,LQSH,NMCTRK,NDALITZ,NUMTAU)
++REP, P=TMANA, D=TPRUN, L=563.
+        CALL TPSSOR(NMCTMX,PTAU,LQSH,PMCTRK,NHM,NMCTRK)
++ADD, P=TMANA, D=TPRUN, L=1048.
+          WRITE(*,*) ITAU
++REP, P=TMANA, D=TPRUN, L=1050.
+          IF(ITAU.GT.0) THEN
+C         IF(ITAU.EQ.11) THEN
++SELF. 
+%
+%+PAM,LUN=12,R=UXCDES,T=H,A,C,IF=-TPPH. (DELPHI_PAM)/uxxx.car
++PAM,LUN=12,R=PXCDES,T=H,A,C,IF=TPPH.   (DELPHI_PAM)/phdstxx.car
+
++PAM,LUN=12,R=PXCDECOR,T=H,A,C.         (DELPHI_PAM)/dstcra34.car
++PAM,LUN=12,R=PXCDES,T=H,A,C.           (DELPHI_PAM)/pxdst34.car
++PAM,LUN=12,R=REFCDE,T=H,A,C.           (DELPHI_PAM)/mucfix.car
++PAM,LUN=12,R=FMUCDE,T=H,A,C.           (DELPHI_PAM)/muflag.car
++PAM,LUN=12,R=ELEPHCDE,T=H,A,C.         (DELPHI_PAM)/elepha32.car
+%
++PAM,LUN=12,T=A,C.                      (DELPHI_PAM)/tauplus.car
++PAM,LUN=12,T=A,C.                      ${PROJECT_SOURCE_DIR}/taumin_good.car
++PAM,LUN=12,T=A,C.                      ${PROJECT_SOURCE_DIR}/shift_rout.car
+%
++QUIT.
