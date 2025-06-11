@@ -1,6 +1,6 @@
 # TAUMIN for Eyal
 
-## Installation withou Makefiles
+## Installation without Makefiles
 
 Compile
 ```bash
