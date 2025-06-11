@@ -4,3 +4,6 @@ build/
 last.kumac
 last.kumacold
 tauplus.car
+*.f
+*.exe
+

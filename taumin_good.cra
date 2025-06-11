@@ -1,5 +1,5 @@
 +OPTION VERbose
-+USE, $ENV{PLINAM}. 
++USE, Linux. 
 %%
 +USE, HPUX, IF=Linux.
 %
@@ -99,7 +99,7 @@ C         IF(ITAU.EQ.11) THEN
 +PAM,LUN=12,R=ELEPHCDE,T=H,A,C.         (DELPHI_PAM)/elepha32.car
 %
 +PAM,LUN=12,T=A,C.                      (DELPHI_PAM)/tauplus.car
-+PAM,LUN=12,T=A,C.                      ${PROJECT_SOURCE_DIR}/taumin_good.car
-+PAM,LUN=12,T=A,C.                      ${PROJECT_SOURCE_DIR}/shift_rout.car
++PAM,LUN=12,T=A,C.                      (PROJECT_SOURCE_DIR)/taumin_good.car
++PAM,LUN=12,T=A,C.                      (PROJECT_SOURCE_DIR)/shift_rout.car
 %
 +QUIT.

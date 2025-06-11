@@ -23,6 +23,7 @@ project(DELPHI VERSION 0.1 LANGUAGES Fortran CXX)
 #
 function(ypatchy FOUT CRA)
 
+    set(ENV{PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR})
     add_custom_command(
         OUTPUT ${FOUT}
         MAIN_DEPENDENCY ${CRA}
